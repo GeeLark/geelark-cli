@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/geelark-tech/geelark-cli/internal/build"
 	"github.com/geelark-tech/geelark-cli/internal/config"
 	"github.com/geelark-tech/geelark-cli/internal/output"
 	"github.com/google/uuid"
@@ -78,6 +79,7 @@ func (c *Client) Post(path string, body interface{}) (*APIResponse, error) {
 	traceID := strings.ToUpper(strings.ReplaceAll(uuid.New().String(), "-", ""))
 	req.Header.Set("traceId", traceID)
 	req.Header.Set("Authorization", "Bearer "+c.cfg.Token)
+	req.Header.Set("geelark-cli", build.Version)
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
@@ -128,6 +130,7 @@ func (c *Client) PostBrowser(path string, body interface{}) (*APIResponse, error
 	traceID := strings.ToUpper(strings.ReplaceAll(uuid.New().String(), "-", ""))
 	req.Header.Set("traceId", traceID)
 	req.Header.Set("Authorization", "Bearer "+c.cfg.Token)
+	req.Header.Set("geelark-cli", build.Version)
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
