@@ -89,6 +89,16 @@ geelark-cli config init --token "your_token_here"
 geelark-cli auth status
 ```
 
+**Step 4 — Install Skills (optional)**
+
+Install geelark-cli skills to your AI Agent so it can automatically discover and use geelark-cli commands:
+
+```bash
+npx skills@latest add geelark-tech/geelark-cli -g --all -y
+```
+
+This registers all geelark-cli skills globally, making them available in Trae, Cursor, Claude Code, Cline, and other supported AI Agents.
+
 
 ## Output Format
 
@@ -554,6 +564,16 @@ geelark-cli config init --token "your_token_here"
 ```bash
 geelark-cli auth status
 ```
+
+**第四步 — 安装 Skills（可选）**
+
+将 geelark-cli skills 安装到 AI Agent，使其能自动发现和使用 geelark-cli 命令：
+
+```bash
+npx skills@latest add geelark-tech/geelark-cli -g --all -y
+```
+
+此命令会全局注册所有 geelark-cli skills，使其在 Trae、Cursor、Claude Code、Cline 等支持的 AI Agent 中可用。
 
 ## 输出格式
 
