@@ -1,6 +1,6 @@
-# phone automation tiktok-comment
+# phone automation youtube-edit-profile
 
-TikTok AI random comment. Supports standard and Asia regions.
+Edit YouTube profile.
 
 
 ## Flags
@@ -9,19 +9,16 @@ TikTok AI random comment. Supports standard and Asia regions.
 |------|-------------|
 | `--id <text>` | Cloud phone ID (required) |
 | `--schedule-at <n>` | Schedule time, second-level timestamp (required) |
-| `--use-ai <n>` | 1=AI comment (Pro only), 2=custom comment (required) |
-| `--comment <text>` | Comment content (max 500 chars; required when use-ai=2) |
-| `--links <csv>` | Comma-separated specified links |
-| `--comment-probability <n>` | Comment probability, 0-100, default 30 |
-| `--search-keywords <csv>` | Comma-separated search keywords |
-| `--like-video` | Whether to like (default false) |
+| `--profile-name <text>` | Profile name (max 50 chars) |
+| `--handle <text>` | Handle / identifier name (max 100 chars) |
+| `--description <text>` | Description (max 1000 chars) |
 | `--name <text>` | Task name (max 128 chars) |
 | `--remark <text>` | Remark (max 200 chars) |
 
 ## Example
 
 ```bash
-geelark-cli phone automation tiktok-comment --id "557536075321468390" --schedule-at 1741846843 --use-ai 2 --comment "Great video!"
+geelark-cli phone automation youtube-edit-profile --id "557536075321468390" --schedule-at 1741846843 --profile-name "myName"
 ```
 
 ### Response Fields

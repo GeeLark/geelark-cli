@@ -14,6 +14,7 @@ TikTok AI random comment — Asia region.
 | `--links <csv>` | Comma-separated specified links |
 | `--comment-probability <n>` | Comment probability, 0-100, default 30 |
 | `--search-keywords <csv>` | Comma-separated search keywords |
+| `--like-video` | Whether to like (default false) |
 | `--name <text>` | Task name (max 128 chars) |
 | `--remark <text>` | Remark (max 200 chars) |
 

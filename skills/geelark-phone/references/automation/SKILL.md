@@ -46,6 +46,7 @@ Cloud phone automation task management. Create, query, cancel, and retry RPA tas
 | `youtube-pub-video` | YouTube publish video |
 | `youtube-pub-short` | YouTube publish Short |
 | `youtube-maintenance` | YouTube account maintenance |
+| `youtube-edit-profile` | Edit YouTube profile |
 | `youtube-comment` | YouTube AI random comment |
 | `youtube-message` | YouTube private message |
 | `x-publish` | X (Twitter) publish tweet |

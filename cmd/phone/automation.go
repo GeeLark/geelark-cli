@@ -57,6 +57,7 @@ Includes task management, custom tasks, and platform-specific automation
 	cmd.AddCommand(newYouTubePubVideoCmd(newClient))
 	cmd.AddCommand(newYouTubePubShortCmd(newClient))
 	cmd.AddCommand(newYouTubeMaintenanceCmd(newClient))
+	cmd.AddCommand(newYouTubeEditProfileCmd(newClient))
 	cmd.AddCommand(newXPublishCmd(newClient))
 	cmd.AddCommand(newRedditWarmupCmd(newClient))
 	cmd.AddCommand(newRedditVideoCmd(newClient))
@@ -907,12 +908,15 @@ func newInstagramPubReelsImagesCmd(newClient clientFactory) *cobra.Command {
 			if err != nil {
 				return err
 			}
-			body := map[string]interface{}{"id": id, "scheduleAt": scheduleAt, "description": description, "image": strings.Split(image, ",")}
+			body := map[string]interface{}{"id": id, "scheduleAt": scheduleAt, "image": strings.Split(image, ",")}
 			if name != "" {
 				body["name"] = name
 			}
 			if remark != "" {
 				body["remark"] = remark
+			}
+			if description != "" {
+				body["description"] = description
 			}
 			if sameStyleUrl != "" {
 				body["sameStyleUrl"] = sameStyleUrl
@@ -938,7 +942,7 @@ func newInstagramPubReelsImagesCmd(newClient clientFactory) *cobra.Command {
 	cmd.Flags().StringVar(&name, "name", "", "Task name (max 128 chars)")
 	cmd.Flags().StringVar(&remark, "remark", "", "Remark (max 200 chars)")
 	cmd.Flags().Int64Var(&scheduleAt, "schedule-at", 0, "Schedule time, second-level timestamp (required)")
-	cmd.Flags().StringVar(&description, "description", "", "Caption (max 2200 chars, required)")
+	cmd.Flags().StringVar(&description, "description", "", "Caption (max 2200 chars)")
 	cmd.Flags().StringVar(&image, "image", "", "Comma-separated image URLs, max 10 (required)")
 	cmd.Flags().StringVar(&sameStyleUrl, "same-style-url", "", "Same style URL")
 	cmd.Flags().BoolVar(&aiTag, "ai-tag", false, "AI tag, defaults to false")
@@ -946,7 +950,6 @@ func newInstagramPubReelsImagesCmd(newClient clientFactory) *cobra.Command {
 	cmd.Flags().BoolVar(&needShareLink, "need-share-link", false, "Whether to retrieve sharing link")
 	_ = cmd.MarkFlagRequired("id")
 	_ = cmd.MarkFlagRequired("schedule-at")
-	_ = cmd.MarkFlagRequired("description")
 	_ = cmd.MarkFlagRequired("image")
 	return cmd
 }
@@ -1187,6 +1190,54 @@ func newYouTubeMaintenanceCmd(newClient clientFactory) *cobra.Command {
 	_ = cmd.MarkFlagRequired("schedule-at")
 	_ = cmd.MarkFlagRequired("browse-video-num")
 	_ = cmd.MarkFlagRequired("keyword")
+	return cmd
+}
+
+func newYouTubeEditProfileCmd(newClient clientFactory) *cobra.Command {
+	var id, name, remark, profileName, handle, description string
+	var scheduleAt int64
+	cmd := &cobra.Command{
+		Use:     "youtube-edit-profile",
+		Short:   "Edit YouTube profile",
+		Example: `  geelark-cli phone automation youtube-edit-profile --id "557536075321468390" --schedule-at 1741846843 --profile-name "myName"`,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			c, err := newClient()
+			if err != nil {
+				return err
+			}
+			body := map[string]interface{}{"id": id, "scheduleAt": scheduleAt}
+			if name != "" {
+				body["name"] = name
+			}
+			if remark != "" {
+				body["remark"] = remark
+			}
+			if profileName != "" {
+				body["profileName"] = profileName
+			}
+			if handle != "" {
+				body["handle"] = handle
+			}
+			if description != "" {
+				body["description"] = description
+			}
+			result, err := c.PostAndPrint("/open/v1/rpa/task/youtubeEdit", body)
+			if err != nil {
+				return err
+			}
+			fmt.Println(result)
+			return nil
+		},
+	}
+	cmd.Flags().StringVar(&id, "id", "", "Cloud phone ID (required)")
+	cmd.Flags().StringVar(&name, "name", "", "Task name (max 128 chars)")
+	cmd.Flags().StringVar(&remark, "remark", "", "Remark (max 200 chars)")
+	cmd.Flags().Int64Var(&scheduleAt, "schedule-at", 0, "Schedule time, second-level timestamp (required)")
+	cmd.Flags().StringVar(&profileName, "profile-name", "", "Profile name (max 50 chars)")
+	cmd.Flags().StringVar(&handle, "handle", "", "Handle/identifier name (max 100 chars)")
+	cmd.Flags().StringVar(&description, "description", "", "Description (max 1000 chars)")
+	_ = cmd.MarkFlagRequired("id")
+	_ = cmd.MarkFlagRequired("schedule-at")
 	return cmd
 }
 
@@ -1826,22 +1877,58 @@ func newFileUploadCmd(newClient clientFactory) *cobra.Command {
 
 func newMultiPlatformVideoCmd(newClient clientFactory) *cobra.Command {
 	var id, name, remark, title, video string
+	var tiktokTitle, youtubeTitle, instagramTitle string
+	var tiktokRecreateLink, youtubeRecreateLink, instagramRecreateLink string
 	var scheduleAt int64
+	var sameStyleVoice, originalVoice int
 	cmd := &cobra.Command{
-		Use:     "multi-platform-video",
-		Short:   "Multichannel video distribution (TikTok/Instagram Reels/YouTube Shorts)",
-		Example: `  geelark-cli phone automation multi-platform-video --id "557536075321468390" --schedule-at 1741846843 --title "title" --video "https://material.geelark.com/a.mp4"`,
+		Use:   "multi-platform-video",
+		Short: "Multichannel video distribution (TikTok/Instagram Reels/YouTube Shorts)",
+		Long: `Multichannel video distribution (TikTok/Instagram Reels/YouTube Shorts).
+Use --title for a shared title across all platforms, or use per-platform titles
+(--tiktok-title, --youtube-title, --instagram-title) for individual titles.
+Use --tiktok-recreate-link / --youtube-recreate-link / --instagram-recreate-link
+to recreate the same style, along with --same-style-voice and --original-voice.`,
+		Example: `  geelark-cli phone automation multi-platform-video --id "557536075321468390" --schedule-at 1741846843 --title "title" --video "https://material.geelark.com/a.mp4"
+  geelark-cli phone automation multi-platform-video --id "557536075321468390" --schedule-at 1741846843 --tiktok-title "tt" --youtube-title "yt" --instagram-title "ig" --video "https://material.geelark.com/a.mp4" --tiktok-recreate-link "https://example.com" --same-style-voice 50 --original-voice 50`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			c, err := newClient()
 			if err != nil {
 				return err
 			}
-			body := map[string]interface{}{"id": id, "scheduleAt": scheduleAt, "title": title, "video": strings.Split(video, ",")}
+			body := map[string]interface{}{"id": id, "scheduleAt": scheduleAt, "video": strings.Split(video, ",")}
 			if name != "" {
 				body["name"] = name
 			}
 			if remark != "" {
 				body["remark"] = remark
+			}
+			if title != "" {
+				body["title"] = title
+			}
+			if tiktokTitle != "" {
+				body["tiktokTitle"] = tiktokTitle
+			}
+			if youtubeTitle != "" {
+				body["youtubeTitle"] = youtubeTitle
+			}
+			if instagramTitle != "" {
+				body["instagramTitle"] = instagramTitle
+			}
+			if tiktokRecreateLink != "" {
+				body["tiktokRecreateLink"] = tiktokRecreateLink
+			}
+			if youtubeRecreateLink != "" {
+				body["youtubeRecreateLink"] = youtubeRecreateLink
+			}
+			if instagramRecreateLink != "" {
+				body["instagramRecreateLink"] = instagramRecreateLink
+			}
+			if sameStyleVoice > 0 {
+				body["sameStyleVoice"] = sameStyleVoice
+			}
+			if originalVoice > 0 {
+				body["originalVoice"] = originalVoice
 			}
 			result, err := c.PostAndPrint("/open/v1/rpa/task/multiPlatformVideoDistribution", body)
 			if err != nil {
@@ -1855,11 +1942,18 @@ func newMultiPlatformVideoCmd(newClient clientFactory) *cobra.Command {
 	cmd.Flags().StringVar(&name, "name", "", "Task name (max 128 chars)")
 	cmd.Flags().StringVar(&remark, "remark", "", "Remark (max 200 chars)")
 	cmd.Flags().Int64Var(&scheduleAt, "schedule-at", 0, "Schedule time, second-level timestamp (required)")
-	cmd.Flags().StringVar(&title, "title", "", "Title (max 100 chars, required)")
+	cmd.Flags().StringVar(&title, "title", "", "Shared title for all platforms (max 100 chars)")
+	cmd.Flags().StringVar(&tiktokTitle, "tiktok-title", "", "TikTok title (max 4000 chars)")
+	cmd.Flags().StringVar(&youtubeTitle, "youtube-title", "", "YouTube title (max 100 chars)")
+	cmd.Flags().StringVar(&instagramTitle, "instagram-title", "", "Instagram title (max 2200 chars)")
 	cmd.Flags().StringVar(&video, "video", "", "Comma-separated video URLs, max 10 (required)")
+	cmd.Flags().StringVar(&tiktokRecreateLink, "tiktok-recreate-link", "", "TikTok style link")
+	cmd.Flags().StringVar(&youtubeRecreateLink, "youtube-recreate-link", "", "YouTube style link")
+	cmd.Flags().StringVar(&instagramRecreateLink, "instagram-recreate-link", "", "Instagram style link")
+	cmd.Flags().IntVar(&sameStyleVoice, "same-style-voice", 0, "Same style volume, 0-100")
+	cmd.Flags().IntVar(&originalVoice, "original-voice", 0, "Original voice volume, 0-100")
 	_ = cmd.MarkFlagRequired("id")
 	_ = cmd.MarkFlagRequired("schedule-at")
-	_ = cmd.MarkFlagRequired("title")
 	_ = cmd.MarkFlagRequired("video")
 	return cmd
 }
@@ -1910,6 +2004,7 @@ func newTikTokCommentCmd(newClient clientFactory) *cobra.Command {
 	var scheduleAt int64
 	var useAi, commentProbability int
 	var links, searchKeywords string
+	var likeVideo bool
 	cmd := &cobra.Command{
 		Use:     "tiktok-comment",
 		Short:   "TikTok AI comment",
@@ -1935,6 +2030,9 @@ func newTikTokCommentCmd(newClient clientFactory) *cobra.Command {
 			if searchKeywords != "" {
 				body["searchKeywords"] = strings.Split(searchKeywords, ",")
 			}
+			if likeVideo {
+				body["likeVideo"] = true
+			}
 			result, err := c.PostAndPrint("/open/v1/rpa/task/tiktokRandomComment", body)
 			if err != nil {
 				return err
@@ -1952,6 +2050,7 @@ func newTikTokCommentCmd(newClient clientFactory) *cobra.Command {
 	cmd.Flags().StringVar(&links, "links", "", "Comma-separated specified links")
 	cmd.Flags().IntVar(&commentProbability, "comment-probability", 0, "Comment probability, 0-100, default 30")
 	cmd.Flags().StringVar(&searchKeywords, "search-keywords", "", "Comma-separated search keywords")
+	cmd.Flags().BoolVar(&likeVideo, "like-video", false, "Whether to like, defaults to false")
 	_ = cmd.MarkFlagRequired("id")
 	_ = cmd.MarkFlagRequired("schedule-at")
 	_ = cmd.MarkFlagRequired("use-ai")
@@ -1963,6 +2062,7 @@ func newTikTokCommentAsiaCmd(newClient clientFactory) *cobra.Command {
 	var scheduleAt int64
 	var useAi, commentProbability int
 	var links, searchKeywords string
+	var likeVideo bool
 	cmd := &cobra.Command{
 		Use:     "tiktok-comment-asia",
 		Short:   "TikTok AI comment (Asia)",
@@ -1988,6 +2088,9 @@ func newTikTokCommentAsiaCmd(newClient clientFactory) *cobra.Command {
 			if searchKeywords != "" {
 				body["searchKeywords"] = strings.Split(searchKeywords, ",")
 			}
+			if likeVideo {
+				body["likeVideo"] = true
+			}
 			result, err := c.PostAndPrint("/open/v1/rpa/task/tiktokRandomCommentAsia", body)
 			if err != nil {
 				return err
@@ -2005,6 +2108,7 @@ func newTikTokCommentAsiaCmd(newClient clientFactory) *cobra.Command {
 	cmd.Flags().StringVar(&links, "links", "", "Comma-separated specified links")
 	cmd.Flags().IntVar(&commentProbability, "comment-probability", 0, "Comment probability, 0-100, default 30")
 	cmd.Flags().StringVar(&searchKeywords, "search-keywords", "", "Comma-separated search keywords")
+	cmd.Flags().BoolVar(&likeVideo, "like-video", false, "Whether to like, defaults to false")
 	_ = cmd.MarkFlagRequired("id")
 	_ = cmd.MarkFlagRequired("schedule-at")
 	_ = cmd.MarkFlagRequired("use-ai")

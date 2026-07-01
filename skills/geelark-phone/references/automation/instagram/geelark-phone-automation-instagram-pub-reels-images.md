@@ -9,8 +9,8 @@ Instagram publish Reels image set.
 |------|-------------|
 | `--id <text>` | Cloud phone ID (required) |
 | `--schedule-at <n>` | Schedule time, second-level timestamp (required) |
-| `--description <text>` | Caption (max 2200 chars, required) |
 | `--image <csv>` | Comma-separated image URLs, max 10 (required) |
+| `--description <text>` | Caption (max 2200 chars) |
 | `--same-style-url <text>` | Same style URL |
 | `--ai-tag` | AI tag (default false) |
 | `--publish-post` | Whether to also publish as POST (default false) |
