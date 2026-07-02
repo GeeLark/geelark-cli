@@ -12,7 +12,7 @@ One-click new machine — reset cloud phone identity. Applications and data will
 | `--keep-phone-number` | Preserve phone number |
 | `--keep-region` | Preserve region (otherwise follows proxy) |
 | `--keep-language` | Preserve language (otherwise defaults to English) |
-| `--mobile-type <text>` | Change mobile type: Android 9, 10, 11, 12, 13, 15, 16 |
+| `--mobile-type <text>` | Change mobile type: Android 9, 10, 11, 12, 13, 14, 15, 16 |
 
 ## Examples
 

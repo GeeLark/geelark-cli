@@ -625,7 +625,7 @@ By default, brand/model is randomized.`,
 	cmd.Flags().BoolVar(&keepPhoneNumber, "keep-phone-number", false, "Preserve phone number")
 	cmd.Flags().BoolVar(&keepRegion, "keep-region", false, "Preserve region (otherwise follows proxy)")
 	cmd.Flags().BoolVar(&keepLanguage, "keep-language", false, "Preserve language (otherwise defaults to English)")
-	cmd.Flags().StringVar(&mobileType, "mobile-type", "", "Change mobile type: Android 9, 10, 11, 12, 13, 15, 16")
+	cmd.Flags().StringVar(&mobileType, "mobile-type", "", "Change mobile type: Android 9, 10, 11, 12, 13, 14, 15, 16")
 	_ = cmd.MarkFlagRequired("id")
 
 	return cmd
