@@ -569,7 +569,7 @@ Status: 0=failed, 1=in progress, 2=succeeded, 3=execution failed.`,
 }
 
 func newResetCmd(newClient clientFactory) *cobra.Command {
-	var id string
+	var id, mobileType string
 	var changeBrandModel, keepNetType, keepPhoneNumber, keepRegion, keepLanguage bool
 
 	cmd := &cobra.Command{
@@ -580,7 +580,8 @@ Optionally preserve network type, phone number, region, and language.
 By default, brand/model is randomized.`,
 		Example: `  geelark-cli phone new-one --id "phone_id"
   geelark-cli phone new-one --id "phone_id" --keep-region --keep-language --keep-phone-number
-  geelark-cli phone new-one --id "phone_id" --no-change-brand`,
+  geelark-cli phone new-one --id "phone_id" --no-change-brand
+  geelark-cli phone new-one --id "phone_id" --mobile-type "Android 16"`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			c, err := newClient()
 			if err != nil {
@@ -605,6 +606,9 @@ By default, brand/model is randomized.`,
 			if keepLanguage {
 				body["keepLanguage"] = true
 			}
+			if mobileType != "" {
+				body["mobileType"] = mobileType
+			}
 
 			result, err := c.PostAndPrint("/open/v2/phone/newOne", body)
 			if err != nil {
@@ -621,6 +625,7 @@ By default, brand/model is randomized.`,
 	cmd.Flags().BoolVar(&keepPhoneNumber, "keep-phone-number", false, "Preserve phone number")
 	cmd.Flags().BoolVar(&keepRegion, "keep-region", false, "Preserve region (otherwise follows proxy)")
 	cmd.Flags().BoolVar(&keepLanguage, "keep-language", false, "Preserve language (otherwise defaults to English)")
+	cmd.Flags().StringVar(&mobileType, "mobile-type", "", "Change mobile type: Android 9, 10, 11, 12, 13, 15, 16")
 	_ = cmd.MarkFlagRequired("id")
 
 	return cmd
