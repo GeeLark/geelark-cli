@@ -1282,12 +1282,13 @@ func newXPublishCmd(newClient clientFactory) *cobra.Command {
 }
 
 func newRedditWarmupCmd(newClient clientFactory) *cobra.Command {
-	var id, name, remark, keyword string
+	var id, name, remark, keyword, keywords string
 	var scheduleAt int64
 	cmd := &cobra.Command{
-		Use:     "reddit-warmup",
-		Short:   "Reddit AI account warmup",
-		Example: `  geelark-cli phone automation reddit-warmup --id "557536075321468390" --schedule-at 1741846843`,
+		Use:   "reddit-warmup",
+		Short: "Reddit AI account warmup",
+		Example: `  geelark-cli phone automation reddit-warmup --id "557536075321468390" --schedule-at 1741846843
+  geelark-cli phone automation reddit-warmup --id "557536075321468390" --schedule-at 1741846843 --keywords "cat,dog"`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			c, err := newClient()
 			if err != nil {
@@ -1300,7 +1301,9 @@ func newRedditWarmupCmd(newClient clientFactory) *cobra.Command {
 			if remark != "" {
 				body["remark"] = remark
 			}
-			if keyword != "" {
+			if keywords != "" {
+				body["keywords"] = strings.Split(keywords, ",")
+			} else if keyword != "" {
 				body["keyword"] = keyword
 			}
 			result, err := c.PostAndPrint("/open/v1/rpa/task/redditWarmup", body)
@@ -1315,7 +1318,8 @@ func newRedditWarmupCmd(newClient clientFactory) *cobra.Command {
 	cmd.Flags().StringVar(&name, "name", "", "Task name (max 128 chars)")
 	cmd.Flags().StringVar(&remark, "remark", "", "Remark (max 200 chars)")
 	cmd.Flags().Int64Var(&scheduleAt, "schedule-at", 0, "Schedule time, second-level timestamp (required)")
-	cmd.Flags().StringVar(&keyword, "keyword", "", "Search keyword")
+	cmd.Flags().StringVar(&keywords, "keywords", "", "Comma-separated search keywords, max 100 (preferred over --keyword)")
+	cmd.Flags().StringVar(&keyword, "keyword", "", "Search keyword (deprecated, use --keywords instead)")
 	_ = cmd.MarkFlagRequired("id")
 	_ = cmd.MarkFlagRequired("schedule-at")
 	return cmd
