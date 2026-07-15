@@ -134,6 +134,8 @@ All automation task creation commands require:
 - [instagram-pub-reels-images](instagram/geelark-phone-automation-instagram-pub-reels-images.md)
 - [instagram-edit-profile](instagram/geelark-phone-automation-instagram-edit-profile.md)
 - [instagram-message](instagram/geelark-phone-automation-instagram-message.md)
+- [instagram-follow-account](instagram/geelark-phone-automation-instagram-follow-account.md)
+- [instagram-ai-comment](instagram/geelark-phone-automation-instagram-ai-comment.md)
 
 ### YouTube
 - [youtube-pub-video](youtube/geelark-phone-automation-youtube-pub-video.md)

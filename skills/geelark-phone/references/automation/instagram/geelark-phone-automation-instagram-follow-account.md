@@ -1,6 +1,6 @@
-# phone automation reddit-warmup
+# phone automation instagram-follow-account
 
-Reddit AI account warmup.
+Follow Instagram accounts.
 
 
 ## Flags
@@ -9,20 +9,14 @@ Reddit AI account warmup.
 |------|-------------|
 | `--id <text>` | Cloud phone ID (required) |
 | `--schedule-at <n>` | Schedule time, second-level timestamp (required) |
-| `--duration <n>` | Duration in minutes (required) |
-| `--keywords <csv>` | Comma-separated search keywords, max 100 (preferred) |
-| `--keyword <text>` | Search keyword (deprecated, use --keywords instead) |
+| `--usernames <csv>` | Comma-separated usernames, max 100, each max 30 chars (required) |
 | `--name <text>` | Task name (max 128 chars) |
 | `--remark <text>` | Remark (max 200 chars) |
 
-## Examples
+## Example
 
 ```bash
-# Basic warmup
-geelark-cli phone automation reddit-warmup --id "557536075321468390" --schedule-at 1741846843 --duration 30
-
-# With keywords
-geelark-cli phone automation reddit-warmup --id "557536075321468390" --schedule-at 1741846843 --duration 30 --keywords "cat,dog"
+geelark-cli phone automation instagram-follow-account --id "557536075321468390" --schedule-at 1741846843 --usernames "ins1,ins2"
 ```
 
 ### Response Fields

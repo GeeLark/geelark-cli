@@ -54,6 +54,8 @@ Includes task management, custom tasks, and platform-specific automation
 	cmd.AddCommand(newInstagramPubReelsImagesCmd(newClient))
 	cmd.AddCommand(newInstagramEditProfileCmd(newClient))
 	cmd.AddCommand(newInstagramMessageCmd(newClient))
+	cmd.AddCommand(newInstagramFollowAccountCmd(newClient))
+	cmd.AddCommand(newInstagramAiCommentCmd(newClient))
 	cmd.AddCommand(newYouTubePubVideoCmd(newClient))
 	cmd.AddCommand(newYouTubePubShortCmd(newClient))
 	cmd.AddCommand(newYouTubeMaintenanceCmd(newClient))
@@ -1055,6 +1057,89 @@ func newInstagramMessageCmd(newClient clientFactory) *cobra.Command {
 	return cmd
 }
 
+func newInstagramFollowAccountCmd(newClient clientFactory) *cobra.Command {
+	var id, name, remark, usernames string
+	var scheduleAt int64
+	cmd := &cobra.Command{
+		Use:     "instagram-follow-account",
+		Short:   "Follow Instagram accounts",
+		Example: `  geelark-cli phone automation instagram-follow-account --id "557536075321468390" --schedule-at 1741846843 --usernames "ins1,ins2"`,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			c, err := newClient()
+			if err != nil {
+				return err
+			}
+			body := map[string]interface{}{"id": id, "scheduleAt": scheduleAt, "username": strings.Split(usernames, ",")}
+			if name != "" {
+				body["name"] = name
+			}
+			if remark != "" {
+				body["remark"] = remark
+			}
+			result, err := c.PostAndPrint("/open/v1/rpa/task/instagramFollowAccount", body)
+			if err != nil {
+				return err
+			}
+			fmt.Println(result)
+			return nil
+		},
+	}
+	cmd.Flags().StringVar(&id, "id", "", "Cloud phone ID (required)")
+	cmd.Flags().StringVar(&name, "name", "", "Task name (max 128 chars)")
+	cmd.Flags().StringVar(&remark, "remark", "", "Remark (max 200 chars)")
+	cmd.Flags().Int64Var(&scheduleAt, "schedule-at", 0, "Schedule time, second-level timestamp (required)")
+	cmd.Flags().StringVar(&usernames, "usernames", "", "Comma-separated usernames, max 100, each max 30 chars (required)")
+	_ = cmd.MarkFlagRequired("id")
+	_ = cmd.MarkFlagRequired("schedule-at")
+	_ = cmd.MarkFlagRequired("usernames")
+	return cmd
+}
+
+func newInstagramAiCommentCmd(newClient clientFactory) *cobra.Command {
+	var id, name, remark string
+	var scheduleAt int64
+	var useAi bool
+	var randomRate int
+	cmd := &cobra.Command{
+		Use:   "instagram-ai-comment",
+		Short: "Instagram AI random comment",
+		Example: `  geelark-cli phone automation instagram-ai-comment --id "557536075321468390" --schedule-at 1741846843 --random-rate 50
+  geelark-cli phone automation instagram-ai-comment --id "557536075321468390" --schedule-at 1741846843 --use-ai --random-rate 30`,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			c, err := newClient()
+			if err != nil {
+				return err
+			}
+			body := map[string]interface{}{"id": id, "scheduleAt": scheduleAt, "randomRate": randomRate}
+			if name != "" {
+				body["name"] = name
+			}
+			if remark != "" {
+				body["remark"] = remark
+			}
+			if cmd.Flags().Changed("use-ai") {
+				body["useAi"] = useAi
+			}
+			result, err := c.PostAndPrint("/open/v1/rpa/task/instagramAiComment", body)
+			if err != nil {
+				return err
+			}
+			fmt.Println(result)
+			return nil
+		},
+	}
+	cmd.Flags().StringVar(&id, "id", "", "Cloud phone ID (required)")
+	cmd.Flags().StringVar(&name, "name", "", "Task name (max 128 chars)")
+	cmd.Flags().StringVar(&remark, "remark", "", "Remark (max 200 chars)")
+	cmd.Flags().Int64Var(&scheduleAt, "schedule-at", 0, "Schedule time, second-level timestamp (required)")
+	cmd.Flags().BoolVar(&useAi, "use-ai", false, "Whether to use AI for comments (default false)")
+	cmd.Flags().IntVar(&randomRate, "random-rate", 0, "Random probability, 0-100 (required)")
+	_ = cmd.MarkFlagRequired("id")
+	_ = cmd.MarkFlagRequired("schedule-at")
+	_ = cmd.MarkFlagRequired("random-rate")
+	return cmd
+}
+
 func newYouTubePubVideoCmd(newClient clientFactory) *cobra.Command {
 	var id, name, remark, title, description, video string
 	var scheduleAt int64
@@ -1284,17 +1369,18 @@ func newXPublishCmd(newClient clientFactory) *cobra.Command {
 func newRedditWarmupCmd(newClient clientFactory) *cobra.Command {
 	var id, name, remark, keyword, keywords string
 	var scheduleAt int64
+	var duration int
 	cmd := &cobra.Command{
 		Use:   "reddit-warmup",
 		Short: "Reddit AI account warmup",
-		Example: `  geelark-cli phone automation reddit-warmup --id "557536075321468390" --schedule-at 1741846843
-  geelark-cli phone automation reddit-warmup --id "557536075321468390" --schedule-at 1741846843 --keywords "cat,dog"`,
+		Example: `  geelark-cli phone automation reddit-warmup --id "557536075321468390" --schedule-at 1741846843 --duration 30
+  geelark-cli phone automation reddit-warmup --id "557536075321468390" --schedule-at 1741846843 --duration 30 --keywords "cat,dog"`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			c, err := newClient()
 			if err != nil {
 				return err
 			}
-			body := map[string]interface{}{"id": id, "scheduleAt": scheduleAt}
+			body := map[string]interface{}{"id": id, "scheduleAt": scheduleAt, "duration": duration}
 			if name != "" {
 				body["name"] = name
 			}
@@ -1318,10 +1404,12 @@ func newRedditWarmupCmd(newClient clientFactory) *cobra.Command {
 	cmd.Flags().StringVar(&name, "name", "", "Task name (max 128 chars)")
 	cmd.Flags().StringVar(&remark, "remark", "", "Remark (max 200 chars)")
 	cmd.Flags().Int64Var(&scheduleAt, "schedule-at", 0, "Schedule time, second-level timestamp (required)")
+	cmd.Flags().IntVar(&duration, "duration", 0, "Duration in minutes (required)")
 	cmd.Flags().StringVar(&keywords, "keywords", "", "Comma-separated search keywords, max 100 (preferred over --keyword)")
 	cmd.Flags().StringVar(&keyword, "keyword", "", "Search keyword (deprecated, use --keywords instead)")
 	_ = cmd.MarkFlagRequired("id")
 	_ = cmd.MarkFlagRequired("schedule-at")
+	_ = cmd.MarkFlagRequired("duration")
 	return cmd
 }
 
@@ -2198,7 +2286,7 @@ func newTikTokFollowAsiaCmd(newClient clientFactory) *cobra.Command {
 }
 
 func newTikTokEditProfileCmd(newClient clientFactory) *cobra.Command {
-	var id, name, remark, avatar, nickName, bio, site string
+	var id, name, remark, avatar, nickName, bio, site, username string
 	var scheduleAt int64
 	cmd := &cobra.Command{
 		Use:     "tiktok-edit-profile",
@@ -2228,6 +2316,9 @@ func newTikTokEditProfileCmd(newClient clientFactory) *cobra.Command {
 			if site != "" {
 				body["site"] = site
 			}
+			if username != "" {
+				body["username"] = username
+			}
 			result, err := c.PostAndPrint("/open/v1/rpa/task/tiktokEdit", body)
 			if err != nil {
 				return err
@@ -2244,6 +2335,7 @@ func newTikTokEditProfileCmd(newClient clientFactory) *cobra.Command {
 	cmd.Flags().StringVar(&nickName, "nick-name", "", "Nickname (max 30 chars)")
 	cmd.Flags().StringVar(&bio, "bio", "", "Bio (max 160 chars)")
 	cmd.Flags().StringVar(&site, "site", "", "Website URL (must start with http/https)")
+	cmd.Flags().StringVar(&username, "username", "", "Username")
 	_ = cmd.MarkFlagRequired("id")
 	_ = cmd.MarkFlagRequired("schedule-at")
 	return cmd

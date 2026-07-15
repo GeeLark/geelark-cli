@@ -9,6 +9,7 @@ Customize OEM/White Label settings. Requires a plan with 50+ profiles.
 | `--title <text>` | Brand title, max 64 bytes |
 | `--logo <text>` | Logo URL, max 255 bytes |
 | `--hide-header` | Hide the header at the top of the cloud phone |
+| `--hide-sidebar` | Hide the sidebar |
 | `--mirror-url <text>` | QR code/Mirror entrance URL, max 255 chars |
 | `--toolbar <json>` | JSON array of toolbar settings `[{"toolBar":"...","visible":bool,"iconUrl":"..."}]` |
 
@@ -24,6 +25,9 @@ geelark-cli phone oem customization --title "MyBrand" --logo "https://example.co
 
 # Hide header and set mirror URL
 geelark-cli phone oem customization --hide-header --mirror-url "https://www.abcd.com/mirror/url"
+
+# Hide sidebar
+geelark-cli phone oem customization --hide-sidebar
 
 # Customize toolbar
 geelark-cli phone oem customization --toolbar "[{\"toolBar\":\"networkQuality\",\"visible\":false},{\"toolBar\":\"rotate\",\"visible\":false}]"

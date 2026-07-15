@@ -13,6 +13,7 @@ TikTok profile editing.
 | `--nick-name <text>` | Nickname (max 30 chars) |
 | `--bio <text>` | Bio (max 160 chars) |
 | `--site <text>` | Website URL (must start with http/https) |
+| `--username <text>` | Username |
 | `--name <text>` | Task name (max 128 chars) |
 | `--remark <text>` | Remark (max 200 chars) |
 
