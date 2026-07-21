@@ -42,6 +42,9 @@ Batch create cloud phones. Basic plan supports 1 at a time; Pro plan supports ba
 # Create with proxy
 geelark-cli phone create --region "sgp" --mobile-type "Android 12" --data "[{\"profileName\":\"myPhone\",\"proxyInformation\":\"socks5://user:pass@1.2.3.4:1080\"}]"
 
+# Create with no proxy (use local network, requires client network extension enabled)
+geelark-cli phone create --region "sgp" --mobile-type "Android 12" --data "[{\"profileName\":\"myPhone\",\"proxyInformation\":\"LocalNetwork\"}]"
+
 # Create with group and tags
 geelark-cli phone create --region "cn" --mobile-type "Android 13" --data "[{\"profileName\":\"phone1\",\"profileGroup\":\"marketing\",\"profileTags\":[\"tiktok\"]}]"
 ```
