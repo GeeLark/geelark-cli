@@ -10,14 +10,18 @@ YouTube account maintenance (browse videos).
 | `--id <text>` | Cloud phone ID (required) |
 | `--schedule-at <n>` | Schedule time, second-level timestamp (required) |
 | `--browse-video-num <n>` | Number of videos to browse, 1-100 (required) |
-| `--keyword <csv>` | Comma-separated keywords, max 10 (required) |
+| `--keyword <csv>` | Comma-separated keywords, max 10 |
 | `--name <text>` | Task name (max 128 chars) |
 | `--remark <text>` | Remark (max 200 chars) |
 
-## Example
+## Examples
 
 ```bash
+# With keywords
 geelark-cli phone automation youtube-maintenance --id "557536075321468390" --schedule-at 1741846843 --browse-video-num 10 --keyword "k1,k2"
+
+# Without keywords
+geelark-cli phone automation youtube-maintenance --id "557536075321468390" --schedule-at 1741846843 --browse-video-num 10
 ```
 
 ### Response Fields

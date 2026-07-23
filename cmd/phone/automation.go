@@ -1244,13 +1244,17 @@ func newYouTubeMaintenanceCmd(newClient clientFactory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "youtube-maintenance",
 		Short:   "YouTube account maintenance",
-		Example: `  geelark-cli phone automation youtube-maintenance --id "557536075321468390" --schedule-at 1741846843 --browse-video-num 10 --keyword "k1,k2"`,
+		Example: `  geelark-cli phone automation youtube-maintenance --id "557536075321468390" --schedule-at 1741846843 --browse-video-num 10 --keyword "k1,k2"
+  geelark-cli phone automation youtube-maintenance --id "557536075321468390" --schedule-at 1741846843 --browse-video-num 10`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			c, err := newClient()
 			if err != nil {
 				return err
 			}
-			body := map[string]interface{}{"id": id, "scheduleAt": scheduleAt, "browseVideoNum": browseVideoNum, "keyword": strings.Split(keyword, ",")}
+			body := map[string]interface{}{"id": id, "scheduleAt": scheduleAt, "browseVideoNum": browseVideoNum}
+			if keyword != "" {
+				body["keyword"] = strings.Split(keyword, ",")
+			}
 			if name != "" {
 				body["name"] = name
 			}
@@ -1270,11 +1274,10 @@ func newYouTubeMaintenanceCmd(newClient clientFactory) *cobra.Command {
 	cmd.Flags().StringVar(&remark, "remark", "", "Remark (max 200 chars)")
 	cmd.Flags().Int64Var(&scheduleAt, "schedule-at", 0, "Schedule time, second-level timestamp (required)")
 	cmd.Flags().IntVar(&browseVideoNum, "browse-video-num", 0, "Number of videos to browse, 1-100 (required)")
-	cmd.Flags().StringVar(&keyword, "keyword", "", "Comma-separated keywords, max 10 (required)")
+	cmd.Flags().StringVar(&keyword, "keyword", "", "Comma-separated keywords, max 10")
 	_ = cmd.MarkFlagRequired("id")
 	_ = cmd.MarkFlagRequired("schedule-at")
 	_ = cmd.MarkFlagRequired("browse-video-num")
-	_ = cmd.MarkFlagRequired("keyword")
 	return cmd
 }
 
