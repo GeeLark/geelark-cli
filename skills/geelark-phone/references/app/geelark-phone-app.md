@@ -325,6 +325,7 @@ Team application management sub-commands.
 | `set-keep-alive` | Enable/disable keep-alive (Pro plan, Android 12-15) |
 | `set-root` | Enable/disable ROOT access |
 | `set-auto-install` | Enable/disable auto-install |
+| `set-hide` | Set team app hidden status |
 
 ### team-app list
 
@@ -358,6 +359,7 @@ geelark-cli phone app team-app list --page 1 --page-size 10
 | `items[].uploadStatus` | integer | Upload status: 0=Uploading, 1=Success, 2=Failed, 3=Failed review |
 | `items[].appAuth` | integer | Authorization: 0=off, 1=on |
 | `items[].appRoot` | integer | ROOT: 0=off, 1=on |
+| `items[].hideApp` | integer | Hidden: 0=not hidden, 1=hidden |
 | `items[].envGroups[]` | array[string] | Allowed group IDs (empty=all groups, "0"=ungrouped) |
 
 ### team-app add
@@ -469,6 +471,24 @@ Enable/disable auto-install. When enabled, the app will be installed after cloud
 
 ```bash
 geelark-cli phone app team-app set-auto-install --id "team_app_id" --opera 1
+```
+
+#### Response Fields
+
+> This command returns only the standard envelope (`traceId` / `code` / `msg`) with no `data` field. A `code` of `0` indicates success. See [geelark-shared](../../../geelark-shared/SKILL.md#api-response-format).
+
+### team-app set-hide
+
+Set the hidden status of a team app. Only supported on Android 12, 13, and 15.
+
+| Flag | Description |
+|------|-------------|
+| `--id <text>` | Team application ID (required) |
+| `--opera <n>` | Operation: 0=stop hiding, 1=hide (required) |
+
+```bash
+geelark-cli phone app team-app set-hide --id "team_app_id" --opera 1
+geelark-cli phone app team-app set-hide --id "team_app_id" --opera 0
 ```
 
 #### Response Fields

@@ -470,6 +470,7 @@ func newTeamAppCmd(newClient clientFactory) *cobra.Command {
 	cmd.AddCommand(newTeamAppSetKeepAliveCmd(newClient))
 	cmd.AddCommand(newTeamAppSetRootCmd(newClient))
 	cmd.AddCommand(newTeamAppSetAutoInstallCmd(newClient))
+	cmd.AddCommand(newTeamAppSetHideCmd(newClient))
 
 	return cmd
 }
@@ -772,6 +773,45 @@ Use --install-group-ids to restrict which environment groups can install the app
 	cmd.Flags().IntVar(&status, "status", 0, "Auto-install: 0=disable, 1=enable (required)")
 	cmd.Flags().StringVar(&installGroupIds, "install-group-ids", "", "Comma-separated environment group IDs (default: all groups; \"0\" for ungrouped)")
 	_ = cmd.MarkFlagRequired("id")
+
+	return cmd
+}
+
+func newTeamAppSetHideCmd(newClient clientFactory) *cobra.Command {
+	var id string
+	var opera int
+
+	cmd := &cobra.Command{
+		Use:   "set-hide",
+		Short: "Set team app hidden status",
+		Long: `Set the hiding status of a team app.
+Only supported on Android 12, 13, and 15 cloud phones.`,
+		Example: `  geelark-cli phone app team-app set-hide --id "team_app_id" --opera 1
+  geelark-cli phone app team-app set-hide --id "team_app_id" --opera 0`,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			c, err := newClient()
+			if err != nil {
+				return err
+			}
+
+			body := map[string]interface{}{
+				"id":    id,
+				"opera": opera,
+			}
+
+			result, err := c.PostAndPrint("/open/v1/app/setHide", body)
+			if err != nil {
+				return err
+			}
+			fmt.Println(result)
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&id, "id", "", "Team application ID (required)")
+	cmd.Flags().IntVar(&opera, "opera", 0, "Operation: 0=stop hiding, 1=hide (required)")
+	_ = cmd.MarkFlagRequired("id")
+	_ = cmd.MarkFlagRequired("opera")
 
 	return cmd
 }

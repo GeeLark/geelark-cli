@@ -1,6 +1,6 @@
 # proxy list
 
-List all proxies with pagination. Supports filtering by ID.
+List all proxies with pagination. Supports filtering by ID and by proxy group.
 
 ## Key Flags
 
@@ -9,6 +9,7 @@ List all proxies with pagination. Supports filtering by ID.
 | `--page <n>` | Page number, min 1 (default 1) |
 | `--page-size <n>` | Page size, 1-100 (default 10) |
 | `--ids <csv>` | Filter by proxy IDs, comma-separated |
+| `--proxy-group-id <text>` | Filter by proxy group ID (`"0"` = ungrouped) |
 
 ## Examples
 
@@ -18,6 +19,12 @@ geelark-cli proxy list --page 1 --page-size 10
 
 # Filter by ID
 geelark-cli proxy list --ids "493188072704313353"
+
+# Filter by proxy group
+geelark-cli proxy list --page 1 --page-size 10 --proxy-group-id "123456789012345678"
+
+# Show only ungrouped proxies
+geelark-cli proxy list --page 1 --page-size 10 --proxy-group-id "0"
 ```
 
 ## Response Fields
@@ -37,3 +44,4 @@ geelark-cli proxy list --ids "493188072704313353"
 | `list[].port` | integer | Proxy port |
 | `list[].username` | string | Proxy username |
 | `list[].password` | string | Proxy password |
+| `list[].proxyGroupId` | string | Proxy group ID (`"0"` = ungrouped) |

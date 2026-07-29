@@ -3,6 +3,7 @@ package phone
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -20,6 +21,10 @@ func newAnalyticsCmd(newClient clientFactory) *cobra.Command {
 	cmd.AddCommand(newAnalyticsUpdateAccountCmd(newClient))
 	cmd.AddCommand(newAnalyticsDeleteAccountCmd(newClient))
 	cmd.AddCommand(newAnalyticsDataCmd(newClient))
+	cmd.AddCommand(newAnalyticsTagsListCmd(newClient))
+	cmd.AddCommand(newAnalyticsTagsCreateCmd(newClient))
+	cmd.AddCommand(newAnalyticsTagsUpdateCmd(newClient))
+	cmd.AddCommand(newAnalyticsTagsDeleteCmd(newClient))
 
 	return cmd
 }
@@ -121,7 +126,7 @@ Channel: 0=TikTok, 1=YouTube, 2=Instagram, 4=Reddit`,
 
 func newAnalyticsSimpleAddAccountCmd(newClient clientFactory) *cobra.Command {
 	var channel int
-	var account, remark string
+	var account, remark, tagIds string
 
 	cmd := &cobra.Command{
 		Use:   "simple-add-account",
@@ -129,7 +134,7 @@ func newAnalyticsSimpleAddAccountCmd(newClient clientFactory) *cobra.Command {
 		Long: `Simplified command to add a single analytics account with flat flags.
 Channel: 0=TikTok, 1=YouTube, 2=Instagram, 4=Reddit`,
 		Example: `  geelark-cli phone analytics simple-add-account --channel 0 --account "myAccount"
-  geelark-cli phone analytics simple-add-account --channel 1 --account "ytAcc" --remark "my note"`,
+  geelark-cli phone analytics simple-add-account --channel 1 --account "ytAcc" --remark "my note" --tag-ids "tag1,tag2"`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			c, err := newClient()
 			if err != nil {
@@ -140,6 +145,9 @@ Channel: 0=TikTok, 1=YouTube, 2=Instagram, 4=Reddit`,
 			}
 			if remark != "" {
 				item["remark"] = remark
+			}
+			if tagIds != "" {
+				item["tagIds"] = strings.Split(tagIds, ",")
 			}
 			body := map[string]interface{}{
 				"channel":      channel,
@@ -157,6 +165,7 @@ Channel: 0=TikTok, 1=YouTube, 2=Instagram, 4=Reddit`,
 	cmd.Flags().IntVar(&channel, "channel", 0, "Platform: 0=TikTok, 1=YouTube, 2=Instagram, 4=Reddit (required)")
 	cmd.Flags().StringVar(&account, "account", "", "Account name, max 64 chars (required)")
 	cmd.Flags().StringVar(&remark, "remark", "", "Remark/note")
+	cmd.Flags().StringVar(&tagIds, "tag-ids", "", "Comma-separated tag IDs, max 20 after deduplication")
 	_ = cmd.MarkFlagRequired("channel")
 	_ = cmd.MarkFlagRequired("account")
 
@@ -164,9 +173,9 @@ Channel: 0=TikTok, 1=YouTube, 2=Instagram, 4=Reddit`,
 }
 
 func newAnalyticsUpdateAccountCmd(newClient clientFactory) *cobra.Command {
-	var id, account, remark string
+	var id, account, remark, tagIds string
 	var channel int
-	var channelSet bool
+	var channelSet, tagIdsSet bool
 
 	cmd := &cobra.Command{
 		Use:   "update-account",
@@ -174,7 +183,9 @@ func newAnalyticsUpdateAccountCmd(newClient clientFactory) *cobra.Command {
 		Long: `Update an analytics account by ID.
 Channel: 0=TikTok, 1=YouTube, 2=Instagram, 4=Reddit`,
 		Example: `  geelark-cli phone analytics update-account --id "565523829426802069" --account "newName"
-  geelark-cli phone analytics update-account --id "id" --remark "new remark" --channel 1`,
+  geelark-cli phone analytics update-account --id "id" --remark "new remark" --channel 1
+  geelark-cli phone analytics update-account --id "id" --tag-ids "tag1,tag2"
+  geelark-cli phone analytics update-account --id "id" --tag-ids ""`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			c, err := newClient()
 			if err != nil {
@@ -192,6 +203,13 @@ Channel: 0=TikTok, 1=YouTube, 2=Instagram, 4=Reddit`,
 			if remark != "" {
 				body["remark"] = remark
 			}
+			if tagIdsSet {
+				if tagIds != "" {
+					body["tagIds"] = strings.Split(tagIds, ",")
+				} else {
+					body["tagIds"] = []string{}
+				}
+			}
 			result, err := c.PostAndPrint("/open/v1/analytics/accounts/update", body)
 			if err != nil {
 				return err
@@ -205,10 +223,12 @@ Channel: 0=TikTok, 1=YouTube, 2=Instagram, 4=Reddit`,
 	cmd.Flags().StringVar(&account, "account", "", "New platform account, max 64 chars")
 	cmd.Flags().IntVar(&channel, "channel", -1, "Platform: 0=TikTok, 1=YouTube, 2=Instagram, 4=Reddit")
 	cmd.Flags().StringVar(&remark, "remark", "", "New remark")
+	cmd.Flags().StringVar(&tagIds, "tag-ids", "", "Comma-separated tag IDs (max 20); pass empty string to clear tags")
 	_ = cmd.MarkFlagRequired("id")
 
 	cmd.PreRunE = func(cmd *cobra.Command, args []string) error {
 		channelSet = cmd.Flags().Changed("channel")
+		tagIdsSet = cmd.Flags().Changed("tag-ids")
 		return nil
 	}
 
@@ -306,6 +326,146 @@ Channel: 0=TikTok, 1=YouTube, 2=Instagram, 4=Reddit. Requires Pro plan.`,
 		dataDateSet = cmd.Flags().Changed("data-date")
 		return nil
 	}
+
+	return cmd
+}
+
+func newAnalyticsTagsListCmd(newClient clientFactory) *cobra.Command {
+	var name string
+	var page, pageSize int
+
+	cmd := &cobra.Command{
+		Use:   "tags-list",
+		Short: "List analytics tags",
+		Example: `  geelark-cli phone analytics tags-list --page 1 --page-size 200
+  geelark-cli phone analytics tags-list --name "Important"`,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			c, err := newClient()
+			if err != nil {
+				return err
+			}
+			body := map[string]interface{}{
+				"page":     page,
+				"pageSize": pageSize,
+			}
+			if name != "" {
+				body["name"] = name
+			}
+			result, err := c.PostAndPrint("/open/v1/analytics/tags/list", body)
+			if err != nil {
+				return err
+			}
+			fmt.Println(result)
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&name, "name", "", "Tag name (fuzzy search)")
+	cmd.Flags().IntVar(&page, "page", 1, "Page number")
+	cmd.Flags().IntVar(&pageSize, "page-size", 200, "Page size (max 200)")
+
+	return cmd
+}
+
+func newAnalyticsTagsCreateCmd(newClient clientFactory) *cobra.Command {
+	var name string
+	var color int
+
+	cmd := &cobra.Command{
+		Use:     "tags-create",
+		Short:   "Create an analytics tag",
+		Example: `  geelark-cli phone analytics tags-create --name "Important Account" --color 1`,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			c, err := newClient()
+			if err != nil {
+				return err
+			}
+			body := map[string]interface{}{
+				"name": name,
+			}
+			if cmd.Flags().Changed("color") {
+				body["color"] = color
+			}
+			result, err := c.PostAndPrint("/open/v1/analytics/tags/create", body)
+			if err != nil {
+				return err
+			}
+			fmt.Println(result)
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&name, "name", "", "Tag name, max 100 chars, must be unique (required)")
+	cmd.Flags().IntVar(&color, "color", 0, "Tag color value (default 0)")
+	_ = cmd.MarkFlagRequired("name")
+
+	return cmd
+}
+
+func newAnalyticsTagsUpdateCmd(newClient clientFactory) *cobra.Command {
+	var id, name string
+	var color int
+
+	cmd := &cobra.Command{
+		Use:     "tags-update",
+		Short:   "Update an analytics tag",
+		Example: `  geelark-cli phone analytics tags-update --id "tag_id" --name "Core Account" --color 2`,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			c, err := newClient()
+			if err != nil {
+				return err
+			}
+			body := map[string]interface{}{
+				"id":   id,
+				"name": name,
+			}
+			if cmd.Flags().Changed("color") {
+				body["color"] = color
+			}
+			result, err := c.PostAndPrint("/open/v1/analytics/tags/update", body)
+			if err != nil {
+				return err
+			}
+			fmt.Println(result)
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&id, "id", "", "Tag ID (required)")
+	cmd.Flags().StringVar(&name, "name", "", "Tag name, max 100 chars (required)")
+	cmd.Flags().IntVar(&color, "color", 0, "Tag color value (default 0)")
+	_ = cmd.MarkFlagRequired("id")
+	_ = cmd.MarkFlagRequired("name")
+
+	return cmd
+}
+
+func newAnalyticsTagsDeleteCmd(newClient clientFactory) *cobra.Command {
+	var ids string
+
+	cmd := &cobra.Command{
+		Use:     "tags-delete",
+		Short:   "Delete analytics tags",
+		Example: `  geelark-cli phone analytics tags-delete --ids "tag1,tag2"`,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			c, err := newClient()
+			if err != nil {
+				return err
+			}
+			body := map[string]interface{}{
+				"ids": strings.Split(ids, ","),
+			}
+			result, err := c.PostAndPrint("/open/v1/analytics/tags/del", body)
+			if err != nil {
+				return err
+			}
+			fmt.Println(result)
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&ids, "ids", "", "Comma-separated tag IDs (required)")
+	_ = cmd.MarkFlagRequired("ids")
 
 	return cmd
 }

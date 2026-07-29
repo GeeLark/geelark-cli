@@ -6,7 +6,7 @@ Batch add proxies. Duplicate proxies will not be added. Up to 100 items per requ
 
 | Flag | Description |
 |------|-------------|
-| `--data <json>` | JSON array; each element contains `scheme` (required), `server` (required), `port` (required), `username` (optional), `password` (optional), `proxyQueryChannel` (optional, 1=IP-API, 2=IP2Location) |
+| `--data <json>` | JSON array; each element contains `scheme` (required), `server` (required), `port` (required), `username` (optional), `password` (optional), `proxyQueryChannel` (optional, 1=IP-API, 2=IP2Location), `proxyGroupId` (optional, group ID or `"0"` for ungrouped) |
 
 ## Examples
 
@@ -16,6 +16,9 @@ geelark-cli proxy add --data "[{\"scheme\":\"socks5\",\"server\":\"192.3.8.1\",\
 
 # Add multiple proxies
 geelark-cli proxy add --data "[{\"scheme\":\"http\",\"server\":\"1.2.3.4\",\"port\":8080,\"proxyQueryChannel\":1},{\"scheme\":\"socks5\",\"server\":\"5.6.7.8\",\"port\":1080,\"proxyQueryChannel\":2}]"
+
+# Add proxies into a group
+geelark-cli proxy add --data "[{\"scheme\":\"socks5\",\"server\":\"192.3.8.1\",\"port\":8000,\"proxyGroupId\":\"123456789012345678\"}]"
 ```
 
 ## Response Fields

@@ -6,7 +6,7 @@ Batch update proxies. Up to 100 items per request.
 
 | Flag | Description |
 |------|-------------|
-| `--data <json>` | JSON array; each element contains `id` (required), `scheme` (required), `server` (required), `port` (required), `username` (optional), `password` (optional), `proxyQueryChannel` (optional, defaults to original) |
+| `--data <json>` | JSON array; each element contains `id` (required), `scheme` (required), `server` (required), `port` (required), `username` (optional), `password` (optional), `proxyQueryChannel` (optional, defaults to original), `proxyGroupId` (optional, group ID or `"0"` for ungrouped) |
 
 ## Examples
 
@@ -16,6 +16,9 @@ geelark-cli proxy update --data "[{\"id\":\"proxy_id\",\"scheme\":\"socks5\",\"s
 
 # Update multiple
 geelark-cli proxy update --data "[{\"id\":\"id1\",\"scheme\":\"http\",\"server\":\"1.2.3.4\",\"port\":8080,\"proxyQueryChannel\":1}]"
+
+# Move proxies to a group
+geelark-cli proxy update --data "[{\"id\":\"id1\",\"scheme\":\"socks5\",\"server\":\"1.2.3.4\",\"port\":8080,\"proxyGroupId\":\"123456789012345678\"}]"
 ```
 
 ## Response Fields

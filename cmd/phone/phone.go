@@ -909,7 +909,7 @@ func newTransferCmd(newClient clientFactory) *cobra.Command {
 }
 
 func newSetNetTypeCmd(newClient clientFactory) *cobra.Command {
-	var id string
+	var id, wifiId string
 	var netType int
 
 	cmd := &cobra.Command{
@@ -917,7 +917,8 @@ func newSetNetTypeCmd(newClient clientFactory) *cobra.Command {
 		Short: "Set cloud phone network type",
 		Long: `Set the network connection mode of a cloud phone.
 0=Wi-Fi, 1=Mobile. Only supported on Android 12/13/15.`,
-		Example: `  geelark-cli phone set-net-type --id "phone_id" --net-type 0`,
+		Example: `  geelark-cli phone set-net-type --id "phone_id" --net-type 0
+  geelark-cli phone set-net-type --id "phone_id" --net-type 0 --wifi-id "TP-link"`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			c, err := newClient()
 			if err != nil {
@@ -926,6 +927,9 @@ func newSetNetTypeCmd(newClient clientFactory) *cobra.Command {
 			body := map[string]interface{}{
 				"id":      id,
 				"netType": netType,
+			}
+			if wifiId != "" {
+				body["wifiId"] = wifiId
 			}
 			result, err := c.PostAndPrint("/open/v1/phone/net/set", body)
 			if err != nil {
@@ -938,6 +942,7 @@ func newSetNetTypeCmd(newClient clientFactory) *cobra.Command {
 
 	cmd.Flags().StringVar(&id, "id", "", "Cloud phone ID (required)")
 	cmd.Flags().IntVar(&netType, "net-type", 0, "Network type: 0=Wi-Fi, 1=Mobile")
+	cmd.Flags().StringVar(&wifiId, "wifi-id", "", "Wi-Fi name, max 16 chars")
 	_ = cmd.MarkFlagRequired("id")
 	_ = cmd.MarkFlagRequired("net-type")
 	return cmd

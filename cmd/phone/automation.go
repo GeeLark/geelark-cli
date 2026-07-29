@@ -380,12 +380,13 @@ func newTaskFlowExportCmd(newClient clientFactory) *cobra.Command {
 }
 
 func newTikTokLoginCmd(newClient clientFactory) *cobra.Command {
-	var id, name, remark, account, password string
+	var id, name, remark, account, password, twoFAKey string
 	var scheduleAt int64
 	cmd := &cobra.Command{
-		Use:     "tiktok-login",
-		Short:   "TikTok account login",
-		Example: `  geelark-cli phone automation tiktok-login --id "557536075321468390" --schedule-at 1741846843 --account "test@gmail.com" --password "123456"`,
+		Use:   "tiktok-login",
+		Short: "TikTok account login",
+		Example: `  geelark-cli phone automation tiktok-login --id "557536075321468390" --schedule-at 1741846843 --account "test@gmail.com" --password "123456"
+  geelark-cli phone automation tiktok-login --id "557536075321468390" --schedule-at 1741846843 --account "test@gmail.com" --password "123456" --two-fa-key "2FAKEY"`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			c, err := newClient()
 			if err != nil {
@@ -397,6 +398,9 @@ func newTikTokLoginCmd(newClient clientFactory) *cobra.Command {
 			}
 			if remark != "" {
 				body["remark"] = remark
+			}
+			if twoFAKey != "" {
+				body["twoFAKey"] = twoFAKey
 			}
 			result, err := c.PostAndPrint("/open/v1/rpa/task/tiktokLogin", body)
 			if err != nil {
@@ -412,6 +416,7 @@ func newTikTokLoginCmd(newClient clientFactory) *cobra.Command {
 	cmd.Flags().Int64Var(&scheduleAt, "schedule-at", 0, "Schedule time, second-level timestamp (required)")
 	cmd.Flags().StringVar(&account, "account", "", "Account (max 64 chars, required)")
 	cmd.Flags().StringVar(&password, "password", "", "Password (max 64 chars, required)")
+	cmd.Flags().StringVar(&twoFAKey, "two-fa-key", "", "2FA Key")
 	_ = cmd.MarkFlagRequired("id")
 	_ = cmd.MarkFlagRequired("schedule-at")
 	_ = cmd.MarkFlagRequired("account")
@@ -1242,8 +1247,8 @@ func newYouTubeMaintenanceCmd(newClient clientFactory) *cobra.Command {
 	var browseVideoNum int
 	var keyword string
 	cmd := &cobra.Command{
-		Use:     "youtube-maintenance",
-		Short:   "YouTube account maintenance",
+		Use:   "youtube-maintenance",
+		Short: "YouTube account maintenance",
 		Example: `  geelark-cli phone automation youtube-maintenance --id "557536075321468390" --schedule-at 1741846843 --browse-video-num 10 --keyword "k1,k2"
   geelark-cli phone automation youtube-maintenance --id "557536075321468390" --schedule-at 1741846843 --browse-video-num 10`,
 		RunE: func(cmd *cobra.Command, args []string) error {

@@ -35,6 +35,7 @@ Batch create cloud phones. Basic plan supports 1 at a time; Pro plan supports ba
 | `netType` | No | Network: 0=Wi-Fi, 1=Mobile (Android 12/13/15 only) |
 | `phoneNumber` | No | Custom phone number (auto-generated if empty) |
 | `phoneName` | No | Device name (auto-generated if empty, not on Android 9/11) |
+| `wifiId` | No | Wi-Fi name, max 16 chars |
 
 ## Examples
 

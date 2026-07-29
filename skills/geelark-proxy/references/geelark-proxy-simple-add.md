@@ -12,6 +12,7 @@ Quick add a single proxy using flat flags. For batch creation, use `add`.
 | `--username <text>` | Proxy username (optional) |
 | `--password <text>` | Proxy password (optional) |
 | `--proxy-query-channel <n>` | Detection channel: 1=IP-API, 2=IP2Location (default 2) |
+| `--proxy-group-id <text>` | Proxy group ID (`"0"` or omit = ungrouped) |
 
 ## Examples
 
@@ -24,6 +25,9 @@ geelark-cli proxy simple-add --scheme socks5 --server 192.3.8.1 --port 8000 --us
 
 # Add with specific detection channel
 geelark-cli proxy simple-add --scheme http --server 1.2.3.4 --port 8080 --proxy-query-channel 1
+
+# Add into a proxy group
+geelark-cli proxy simple-add --scheme socks5 --server 192.3.8.1 --port 8000 --proxy-group-id "123456789012345678"
 ```
 
 ## Response Fields

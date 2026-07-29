@@ -13,6 +13,7 @@ Quick update a single proxy using flat flags. For batch updates, use `update`.
 | `--username <text>` | Proxy username (optional) |
 | `--password <text>` | Proxy password (optional) |
 | `--proxy-query-channel <n>` | Detection channel: 1=IP-API, 2=IP2Location (default 2) |
+| `--proxy-group-id <text>` | Proxy group ID (`"0"` = ungrouped). Use this flag explicitly to move the proxy to a group |
 
 ## Examples
 
@@ -22,6 +23,12 @@ geelark-cli proxy simple-update --id "proxy_id" --scheme socks5 --server 192.3.8
 
 # Update with auth and detection channel
 geelark-cli proxy simple-update --id "proxy_id" --scheme socks5 --server 192.3.8.1 --port 8000 --username admin --password admin --proxy-query-channel 1
+
+# Move proxy to a group
+geelark-cli proxy simple-update --id "proxy_id" --scheme socks5 --server 192.3.8.1 --port 8000 --proxy-group-id "123456789012345678"
+
+# Move proxy to ungrouped
+geelark-cli proxy simple-update --id "proxy_id" --scheme socks5 --server 192.3.8.1 --port 8000 --proxy-group-id "0"
 ```
 
 ## Response Fields

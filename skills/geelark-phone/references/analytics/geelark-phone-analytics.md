@@ -16,6 +16,10 @@ geelark-cli phone analytics <command> [flags]
 | `update-account` | Update an analytics account |
 | `delete-account` | Delete an analytics account |
 | `data` | Get analytics account data |
+| `tags-list` | List analytics tags |
+| `tags-create` | Create an analytics tag |
+| `tags-update` | Update an analytics tag |
+| `tags-delete` | Delete analytics tags |
 
 ### Channel Values
 
@@ -65,10 +69,10 @@ Batch add analytics accounts. Max 200 per request.
 | Flag | Description |
 |------|-------------|
 | `--channel <n>` | Platform (required) |
-| `--data <json>` | JSON array; each element contains `account` (required, max 64 chars) and `remark` (optional) |
+| `--data <json>` | JSON array; each element contains `account` (required, max 64 chars), `remark` (optional), `tagIds` (optional, array of tag IDs, max 20) |
 
 ```bash
-geelark-cli phone analytics add-accounts --channel 0 --data "[{\"account\":\"acc1\",\"remark\":\"my note\"}]"
+geelark-cli phone analytics add-accounts --channel 0 --data "[{\"account\":\"acc1\",\"remark\":\"my note\",\"tagIds\":[\"tag1\"]}]"
 ```
 
 ### Response Fields
@@ -91,9 +95,11 @@ Quick add a single analytics account.
 | `--channel <n>` | Platform (required) |
 | `--account <text>` | Account name, max 64 chars (required) |
 | `--remark <text>` | Remark/note |
+| `--tag-ids <csv>` | Comma-separated tag IDs, max 20 after deduplication |
 
 ```bash
 geelark-cli phone analytics simple-add-account --channel 0 --account "myAccount"
+geelark-cli phone analytics simple-add-account --channel 1 --account "ytAcc" --tag-ids "tag1,tag2"
 ```
 
 ### Response Fields
@@ -108,9 +114,12 @@ Same as [`add-accounts`](#add-accounts).
 | `--account <text>` | New account name, max 64 chars |
 | `--channel <n>` | New platform |
 | `--remark <text>` | New remark |
+| `--tag-ids <csv>` | Comma-separated tag IDs (max 20); pass empty string to clear tags |
 
 ```bash
 geelark-cli phone analytics update-account --id "id" --account "newName"
+geelark-cli phone analytics update-account --id "id" --tag-ids "tag1,tag2"
+geelark-cli phone analytics update-account --id "id" --tag-ids ""
 ```
 
 ### Response Fields
@@ -179,3 +188,105 @@ geelark-cli phone analytics data --page 1 --page-size 10 --channel 0
 | Code | Description |
 |------|-------------|
 | 43002 | Please upgrade to Pro plan to use this feature |
+
+## tags-list
+
+List analytics tags with optional fuzzy search.
+
+| Flag | Description |
+|------|-------------|
+| `--name <text>` | Tag name (fuzzy search) |
+| `--page <n>` | Page number (default 1) |
+| `--page-size <n>` | Page size, max 200 (default 200) |
+
+```bash
+geelark-cli phone analytics tags-list --page 1 --page-size 200
+geelark-cli phone analytics tags-list --name "Important"
+```
+
+### Response Fields
+
+> Below is the `data` inner structure. The full response is wrapped in the standard envelope (`traceId` / `code` / `msg` / `data`), see [geelark-shared](../../../geelark-shared/SKILL.md#api-response-format).
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `total` | integer | Total count |
+| `page` | integer | Current page |
+| `pageSize` | integer | Page size |
+| `list[]` | array | Tag list |
+| `list[].id` | string | Tag ID |
+| `list[].name` | string | Tag name |
+| `list[].color` | integer | Tag color value |
+
+## tags-create
+
+Create an analytics tag. Tag name must be unique within the team.
+
+| Flag | Description |
+|------|-------------|
+| `--name <text>` | Tag name, max 100 chars, must be unique (required) |
+| `--color <n>` | Tag color value (default 0) |
+
+```bash
+geelark-cli phone analytics tags-create --name "Important Account" --color 1
+```
+
+### Response Fields
+
+Success only (no `data` field). Standard envelope with `code=0` indicates success.
+
+### Error Codes
+
+| Code | Description |
+|------|-------------|
+| 40004 | Invalid request parameters |
+| 43021 | Tag with the same name already exists |
+
+## tags-update
+
+Update an analytics tag.
+
+| Flag | Description |
+|------|-------------|
+| `--id <text>` | Tag ID (required) |
+| `--name <text>` | Tag name, max 100 chars (required) |
+| `--color <n>` | Tag color value (default 0) |
+
+```bash
+geelark-cli phone analytics tags-update --id "tag_id" --name "Core Account" --color 2
+```
+
+### Response Fields
+
+Success only (no `data` field). Standard envelope with `code=0` indicates success.
+
+### Error Codes
+
+| Code | Description |
+|------|-------------|
+| 40004 | Invalid request parameters |
+| 43021 | Tag with the same name already exists |
+| 43022 | Tag not found |
+
+## tags-delete
+
+Delete one or more analytics tags. Associated account links are also removed.
+
+| Flag | Description |
+|------|-------------|
+| `--ids <csv>` | Comma-separated tag IDs (required) |
+
+```bash
+geelark-cli phone analytics tags-delete --ids "tag1,tag2"
+```
+
+### Response Fields
+
+Success only (no `data` field). Standard envelope with `code=0` indicates success.
+
+### Error Codes
+
+| Code | Description |
+|------|-------------|
+| 40004 | Invalid request parameters |
+| 43022 | Tag not found |
