@@ -30,6 +30,7 @@ Create a new browser environment with full configuration via JSON. Supports acco
 | `proxyId` | No | string | Proxy ID (preferred) |
 | `proxyConfig` | No | object | Proxy configuration |
 | `browserStartArg` | No | string | Startup parameters |
+| `browserKernelVer` | No | string | Browser kernel version: 134,138,142,143,144,145,146,147,148,149,auto (default auto) |
 
 ### SimulateConfig Fields
 

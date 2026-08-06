@@ -27,6 +27,7 @@ geelark-cli phone <command> [flags]
 | `simple-create` | Quick create a single cloud phone |
 | `start` | Batch start cloud phones |
 | `stop` | Batch stop cloud phones |
+| `restart` | Restart a cloud phone |
 | `delete` | Batch delete cloud phones |
 | `status` | Query cloud phone status |
 | `update` | Update cloud phone info |
@@ -71,6 +72,7 @@ geelark-cli phone <command> [flags]
 | View cloud phones | [`list`](references/phone/geelark-phone-list.md) |
 | Create a phone | [`simple-create`](references/phone/geelark-phone-simple-create.md) (recommended) or [`create`](references/phone/geelark-phone-create.md) (batch) |
 | Start/stop phones | [`start`](references/phone/geelark-phone-start.md) / [`stop`](references/phone/geelark-phone-stop.md) |
+| Restart a phone | [`restart`](references/phone/geelark-phone-restart.md) |
 | Delete phones | [`delete`](references/phone/geelark-phone-delete.md) |
 | Check phone status | [`status`](references/phone/geelark-phone-status.md) |
 | Modify phone info | [`update`](references/phone/geelark-phone-update.md) |

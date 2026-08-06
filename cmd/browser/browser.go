@@ -155,7 +155,7 @@ Supports account, proxy, fingerprint, simulation settings, etc.`,
 }
 
 func newSimpleCreateCmd(newClient clientFactory) *cobra.Command {
-	var serialName string
+	var serialName, browserKernelVer string
 	var browserOs int
 
 	cmd := &cobra.Command{
@@ -164,7 +164,8 @@ func newSimpleCreateCmd(newClient clientFactory) *cobra.Command {
 		Long: `Simplified command to create a single browser with just the required fields.
 Use 'create' for full configuration via JSON.`,
 		Example: `  geelark-cli browser simple-create --serial-name "myBrowser" --browser-os 1
-  geelark-cli browser simple-create --serial-name "macBrowser" --browser-os 2`,
+  geelark-cli browser simple-create --serial-name "macBrowser" --browser-os 2
+  geelark-cli browser simple-create --serial-name "myBrowser" --browser-os 1 --browser-kernel-ver "149"`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			c, err := newClient()
 			if err != nil {
@@ -173,6 +174,9 @@ Use 'create' for full configuration via JSON.`,
 			body := map[string]interface{}{
 				"serialName": serialName,
 				"browserOs":  browserOs,
+			}
+			if browserKernelVer != "" {
+				body["browserKernelVer"] = browserKernelVer
 			}
 			result, err := c.PostBrowserAndPrint("/api/v1/browser/create", body)
 			if err != nil {
@@ -185,6 +189,7 @@ Use 'create' for full configuration via JSON.`,
 
 	cmd.Flags().StringVar(&serialName, "serial-name", "", "Browser environment name, max 100 chars (required)")
 	cmd.Flags().IntVar(&browserOs, "browser-os", 1, "Operating system: 1=Win, 2=Mac (required)")
+	cmd.Flags().StringVar(&browserKernelVer, "browser-kernel-ver", "", "Browser kernel version: 134,138,142,143,144,145,146,147,148,149,auto (default auto)")
 	_ = cmd.MarkFlagRequired("serial-name")
 	_ = cmd.MarkFlagRequired("browser-os")
 	return cmd

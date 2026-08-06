@@ -23,6 +23,7 @@ func NewCmd(newClient clientFactory) *cobra.Command {
 	cmd.AddCommand(newListCmd(newClient))
 	cmd.AddCommand(newStartCmd(newClient))
 	cmd.AddCommand(newStopCmd(newClient))
+	cmd.AddCommand(newRestartCmd(newClient))
 	cmd.AddCommand(newDeleteCmd(newClient))
 	cmd.AddCommand(newStatusCmd(newClient))
 	cmd.AddCommand(newCreateCmd(newClient))
@@ -272,8 +273,41 @@ func newDeleteCmd(newClient clientFactory) *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVar(&ids, "ids", "", "Comma-separated cloud phone IDs, max 100 (required)")
+	cmd.Flags().StringVar(&ids, "ids", "", "Comma-separated cloud phone IDs, max 200 (required)")
 	_ = cmd.MarkFlagRequired("ids")
+
+	return cmd
+}
+
+func newRestartCmd(newClient clientFactory) *cobra.Command {
+	var id string
+
+	cmd := &cobra.Command{
+		Use:     "restart",
+		Short:   "Restart a cloud phone",
+		Long:    "Restart a cloud phone. Ensure the cloud phone startup callback has been received before calling.",
+		Example: `  geelark-cli phone restart --id "631490227545875981"`,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			c, err := newClient()
+			if err != nil {
+				return err
+			}
+
+			body := map[string]interface{}{
+				"id": id,
+			}
+
+			result, err := c.PostAndPrint("/open/v1/phone/restart", body)
+			if err != nil {
+				return err
+			}
+			fmt.Println(result)
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&id, "id", "", "Cloud phone ID (required)")
+	_ = cmd.MarkFlagRequired("id")
 
 	return cmd
 }
