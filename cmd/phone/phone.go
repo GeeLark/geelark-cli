@@ -1009,7 +1009,7 @@ func newBrandTeamListCmd(newClient clientFactory) *cobra.Command {
 
 	cmd.Flags().IntVar(&page, "page", 1, "Page number, min 1")
 	cmd.Flags().IntVar(&pageSize, "page-size", 10, "Page size, 1-100")
-	cmd.Flags().IntVar(&androidVer, "android-ver", 12, "Android version (9/10/11/12/13/15)")
+	cmd.Flags().IntVar(&androidVer, "android-ver", 12, "Android version (9-16)")
 	_ = cmd.MarkFlagRequired("android-ver")
 	return cmd
 }

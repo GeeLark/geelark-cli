@@ -6,7 +6,7 @@ List team-uploaded cloud phone brands and models for a given Android version.
 
 | Flag | Description |
 |------|-------------|
-| `--android-ver <n>` | Android version (9/10/11/12/13/15) (required) |
+| `--android-ver <n>` | Android version (9-16) (required) |
 | `--page <n>` | Page number, min 1 (default 1) |
 | `--page-size <n>` | Page size, 1-100 (default 10) |
 
