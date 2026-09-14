@@ -1,0 +1,67 @@
+internal/mcpserver/router.go
+  s_c47ab592679a70::t_cc7e77ab1345ac 1-97,99,101-153
+  s_c47ab592679a70::t_ec50d67a2879ea 98,100
+internal/mcpserver/help.go
+  s_c47ab592679a70::t_cc7e77ab1345ac 1-38,41-49
+  s_c47ab592679a70::t_ec50d67a2879ea 39-40
+internal/mcpserver/tools_browser.go
+  s_c47ab592679a70::t_cc7e77ab1345ac 1-70
+internal/mcpserver/tools_phone.go
+  s_c47ab592679a70::t_cc7e77ab1345ac 1-76
+internal/mcpserver/tools_phone_system.go
+  s_c47ab592679a70::t_cc7e77ab1345ac 1-62
+cmd/mcp/mcp.go
+  s_c47ab592679a70::t_ec50d67a2879ea 16-18,36
+  s_c47ab592679a70::t_cc7e77ab1345ac 1-15,19-35,37-57
+internal/mcpdocs/docs.go
+  s_c47ab592679a70::t_cc7e77ab1345ac 1-127
+internal/mcpserver/tools_misc.go
+  s_c47ab592679a70::t_cc7e77ab1345ac 1-80
+cmd/root.go
+  s_c47ab592679a70::t_ec50d67a2879ea 104,106-107,109
+  s_c47ab592679a70::t_cc7e77ab1345ac 4,6,8-9,16,57,65-66,108
+internal/mcpserver/exec.go
+  s_c47ab592679a70::t_ec50d67a2879ea 6-7,14-18,21-22,24-26,37-39,41-50,53-54,57,64,67-68,72,75-84
+  s_c47ab592679a70::t_cc7e77ab1345ac 1-5,8-13,19-20,23,27-36,40,51-52,55-56,58-63,65-66,69-71,73-74,85-143
+internal/mcpserver/docs.go
+  s_c47ab592679a70::t_cc7e77ab1345ac 1-37
+internal/mcpserver/server.go
+  s_c47ab592679a70::t_cc7e77ab1345ac 1-7,11-65
+  s_c47ab592679a70::t_ec50d67a2879ea 8-10
+go.mod
+  s_c47ab592679a70::t_cc7e77ab1345ac 7,12,14-15,17-21
+internal/mcpdocs/enums.go
+  s_c47ab592679a70::t_cc7e77ab1345ac 1-131
+internal/mcpserver/tools_phone_automation.go
+  s_c47ab592679a70::t_cc7e77ab1345ac 1-101
+main.go
+  s_c47ab592679a70::t_cc7e77ab1345ac 5,11-17,19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.2",
+  "base_commit_sha": "163e37a82c5d3d03a4efb3bb45f6f16dbcbd5dad",
+  "prompts": {},
+  "sessions": {
+    "s_c47ab592679a70": {
+      "agent_id": {
+        "tool": "trae",
+        "id": "6aa25669cf21b757dd2fa256",
+        "model": "glm-5.3__dev"
+      },
+      "human_author": "geelark-tech <geelark@geelark.com>",
+      "custom_attributes": {
+        "external_session_id": "6aa25669cf21b757dd2fa256",
+        "tool_use_id": "6aa7fdbecf21b757dd2fbc80",
+        "edit_kind": "bash",
+        "runtime_client": "trae-tob-git-ai",
+        "display_model_name": "GLM-5.3",
+        "client_type": "ide",
+        "source_scene": "agent",
+        "operation_id": "6aa7fdbecf21b757dd2fbc80",
+        "session_id": "6aa25669cf21b757dd2fa256",
+        "tool_name": "RunCommand"
+      }
+    }
+  }
+}
