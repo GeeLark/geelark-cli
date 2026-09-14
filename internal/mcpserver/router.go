@@ -96,22 +96,15 @@ func (s *Server) handleRouted(ctx context.Context, t *routedTool, args Args) (*m
 	}
 	cmdPath := strings.Join(append(a.path, sub), " ")
 	if !oc.OK() {
-		// Return CLI stderr/stdout (contains usage errors) so the model can self-correct.
-		msg := oc.FailureText()
-		// Append the command's reference doc so the model can fix parameter
-		// errors in one round without a separate geelark_docs call.
-		if doc, err := s.docs.Get(cmdPath); err == nil {
-			msg += "\n\n[Reference doc for this command]\n" + strings.TrimSpace(doc)
-		}
-		return errorResult(msg), nil, nil
+		// CLI stderr/stdout contains usage errors; attach the reference doc
+		// so the model can fix parameter errors in one round.
+		return errorResult(s.withRefDoc(cmdPath, oc.FailureText())), nil, nil
 	}
 	out := oc.Stdout
-	// API-level failure: the CLI succeeded but the JSON envelope reports a
-	// non-zero code. Attach the reference doc for the same self-correction.
+	// API-level failure: process exited 0 but the JSON envelope reports a
+	// non-zero code. Mark IsError so the model does not treat it as success.
 	if c, ok := envelopeCode(out); ok && c != 0 {
-		if doc, err := s.docs.Get(cmdPath); err == nil {
-			out += "\n\n[Reference doc for this command]\n" + strings.TrimSpace(doc)
-		}
+		return errorResult(s.withRefDoc(cmdPath, out)), nil, nil
 	}
 	// Append enum hints from the command's reference doc so any LLM can
 	// interpret numeric enum fields (e.g. status: 2) without extra lookups.
@@ -121,6 +114,14 @@ func (s *Server) handleRouted(ctx context.Context, t *routedTool, args Args) (*m
 	return &mcp.CallToolResult{
 		Content: []mcp.Content{&mcp.TextContent{Text: out}},
 	}, nil, nil
+}
+
+// withRefDoc appends the command's reference doc when available.
+func (s *Server) withRefDoc(cmdPath, msg string) string {
+	if doc, err := s.docs.Get(cmdPath); err == nil {
+		return msg + "\n\n[Reference doc for this command]\n" + strings.TrimSpace(doc)
+	}
+	return msg
 }
 
 // envelopeCode extracts the top-level "code" field from a JSON API envelope.

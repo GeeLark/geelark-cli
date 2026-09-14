@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"regexp"
 	"sort"
 	"strconv"
@@ -41,11 +42,20 @@ func (o Outcome) FailureText() string {
 }
 
 // SelfBin returns the path of the running geelark-cli binary.
-// Override with GEELARK_CLI_PATH (useful in tests or when the process
-// was started via a wrapper whose argv[0] is not the Go binary).
+//
+// Preference order:
+//  1. GEELARK_CLI_PATH — tests / wrappers that replace argv[0]
+//  2. os.Executable — absolute path; survives chdir unlike a relative argv[0]
+//  3. os.Args[0] — last resort
 func SelfBin() string {
 	if p := os.Getenv("GEELARK_CLI_PATH"); p != "" {
 		return p
+	}
+	if exe, err := os.Executable(); err == nil {
+		if resolved, err := filepath.EvalSymlinks(exe); err == nil {
+			return resolved
+		}
+		return exe
 	}
 	return os.Args[0]
 }
