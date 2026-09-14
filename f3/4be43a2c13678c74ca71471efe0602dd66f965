@@ -1,0 +1,35 @@
+internal/mcpserver/exec.go
+  s_c47ab592679a70::t_568a4f843cf0e3 8,45-49,55-57
+  s_c47ab592679a70::t_2d3f24de284944 54,58-59
+internal/mcpserver/router.go
+  s_c47ab592679a70::t_568a4f843cf0e3 99-101,104-105,107,119-124
+  s_c47ab592679a70::t_46b2d15ef79391 125-126
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.2",
+  "base_commit_sha": "f34be43a2c13678c74ca71471efe0602dd66f965",
+  "prompts": {},
+  "sessions": {
+    "s_c47ab592679a70": {
+      "agent_id": {
+        "tool": "trae",
+        "id": "6aa25669cf21b757dd2fa256",
+        "model": "glm-5.3__dev"
+      },
+      "human_author": "geelark-tech <geelark@geelark.com>",
+      "custom_attributes": {
+        "display_model_name": "GLM-5.3",
+        "session_id": "6aa25669cf21b757dd2fa256",
+        "operation_id": "6aa7ffb2cf21b757dd2fbcf9",
+        "tool_use_id": "6aa7ffb2cf21b757dd2fbcf9",
+        "source_scene": "agent",
+        "client_type": "ide",
+        "tool_name": "RunCommand",
+        "edit_kind": "bash",
+        "runtime_client": "trae-tob-git-ai",
+        "external_session_id": "6aa25669cf21b757dd2fa256"
+      }
+    }
+  }
+}
