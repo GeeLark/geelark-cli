@@ -1,14 +1,19 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
+	"io/fs"
 	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/geelark-tech/geelark-cli/cmd/auth"
 	"github.com/geelark-tech/geelark-cli/cmd/billing"
 	"github.com/geelark-tech/geelark-cli/cmd/browser"
 	cmdconfig "github.com/geelark-tech/geelark-cli/cmd/config"
 	"github.com/geelark-tech/geelark-cli/cmd/group"
+	cmdmcp "github.com/geelark-tech/geelark-cli/cmd/mcp"
 	"github.com/geelark-tech/geelark-cli/cmd/phone"
 	"github.com/geelark-tech/geelark-cli/cmd/proxy"
 	"github.com/geelark-tech/geelark-cli/cmd/tag"
@@ -49,6 +54,7 @@ COMMANDS:
     group       Group management
     tag         Tag management
     billing     Billing & subscription management
+    mcp         Run as an MCP server over stdio (for AI agents)
 
 DOCS:
     https://open.geelark.com
@@ -56,7 +62,8 @@ DOCS:
 More help: geelark-cli <command> --help`
 
 // Execute runs the root command and returns the process exit code.
-func Execute() int {
+// skillsFS holds the embedded skills reference docs served by the mcp command.
+func Execute(skillsFS fs.FS) int {
 	var formatFlag string
 
 	rootCmd := &cobra.Command{
@@ -86,7 +93,6 @@ func Execute() int {
 		return client.New(cfg), nil
 	}
 
-	// Register sub-commands
 	rootCmd.AddCommand(cmdconfig.NewCmd())
 	rootCmd.AddCommand(auth.NewCmd(newClient))
 	rootCmd.AddCommand(phone.NewCmd(newClient))
@@ -95,8 +101,12 @@ func Execute() int {
 	rootCmd.AddCommand(group.NewCmd(newClient))
 	rootCmd.AddCommand(tag.NewCmd(newClient))
 	rootCmd.AddCommand(billing.NewCmd(newClient))
+	rootCmd.AddCommand(cmdmcp.NewCmd(skillsFS, build.Version))
 
-	if err := rootCmd.Execute(); err != nil {
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+
+	if err := rootCmd.ExecuteContext(ctx); err != nil {
 		fmt.Fprintln(os.Stderr, "Error:", err)
 		return 1
 	}
