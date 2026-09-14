@@ -1,0 +1,35 @@
+cmd/phone/phone.go
+  s_c47ab592679a70::t_f2288c04f879aa 178-179,181-182,210
+  s_c47ab592679a70::t_8e7b328b384864 158,167,170
+skills/geelark-phone/references/phone/geelark-phone-start.md
+  s_c47ab592679a70::t_e3b567d173580e 24-26
+  s_c47ab592679a70::t_8fd21307c56274 13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.2",
+  "base_commit_sha": "12d6dca7119868a223f922a1a1b7a0494f47d22d",
+  "prompts": {},
+  "sessions": {
+    "s_c47ab592679a70": {
+      "agent_id": {
+        "tool": "trae",
+        "id": "6aa25669cf21b757dd2fa256",
+        "model": "glm-5.3__dev"
+      },
+      "human_author": "geelark-tech <geelark@geelark.com>",
+      "custom_attributes": {
+        "external_session_id": "6aa25669cf21b757dd2fa256",
+        "client_type": "ide",
+        "tool_use_id": "6aa801d1cf21b757dd2fbd2d",
+        "display_model_name": "GLM-5.3",
+        "runtime_client": "trae-tob-git-ai",
+        "source_scene": "agent",
+        "session_id": "6aa25669cf21b757dd2fa256",
+        "tool_name": "Edit",
+        "operation_id": "6aa801d1cf21b757dd2fbd2d",
+        "edit_kind": "file_edit"
+      }
+    }
+  }
+}
