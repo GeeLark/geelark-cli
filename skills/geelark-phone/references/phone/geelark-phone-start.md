@@ -10,6 +10,7 @@ Batch start cloud phones. Max 200 IDs per request.
 | `--width <n>` | Display width in px, 200-600 (default 336) |
 | `--center <n>` | Center display: 0=no, 1=yes (default 1) |
 | `--energy-saving <n>` | Energy-saving: 0=disabled, 1=enabled (auto shutdown after 30min idle) |
+| `--lang <text>` | Language, default en-US (supported: zh-CN, en-US, vi-VN, pt-BR, ru-RU, es-LA, uk-UA, ja-JP, zh-TW, id-ID, tr-TR, fr-FR). Always sent — the backend default differs per domain |
 | `--material-tag-ids <csv>` | Material tag IDs, max 10 (requires OEM) |
 
 ## Examples
@@ -20,6 +21,9 @@ geelark-cli phone start --ids "id1,id2,id3"
 
 # Start with display options
 geelark-cli phone start --ids "id1" --width 480 --center 1 --energy-saving 1
+
+# Start with a specific language
+geelark-cli phone start --ids "id1" --lang "zh-CN"
 ```
 
 ## Response Fields

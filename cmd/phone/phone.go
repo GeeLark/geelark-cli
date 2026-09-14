@@ -155,7 +155,7 @@ func newListCmd(newClient clientFactory) *cobra.Command {
 }
 
 func newStartCmd(newClient clientFactory) *cobra.Command {
-	var ids string
+	var ids, lang string
 	var width, center, energySavingMode int
 	var materialTagIds string
 	var widthSet, centerSet, energySavingSet bool
@@ -164,9 +164,10 @@ func newStartCmd(newClient clientFactory) *cobra.Command {
 		Use:   "start",
 		Short: "Start cloud phones",
 		Long: `Batch start cloud phones by IDs.
-Supports display width, centering, energy-saving mode, and material tag filters.`,
+Supports display width, centering, energy-saving mode, language, and material tag filters.`,
 		Example: `  geelark-cli phone start --ids "id1,id2,id3"
   geelark-cli phone start --ids "id1" --width 480 --center 1 --energy-saving 1
+  geelark-cli phone start --ids "id1" --lang "zh-CN"
   geelark-cli phone start --ids "id1" --material-tag-ids "tagId1,tagId2"`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			c, err := newClient()
@@ -174,8 +175,11 @@ Supports display width, centering, energy-saving mode, and material tag filters.
 				return err
 			}
 
+			// lang is always sent: the backend default differs per domain,
+			// so the CLI pins it to en-US instead of relying on the server.
 			body := map[string]interface{}{
-				"ids": strings.Split(ids, ","),
+				"ids":  strings.Split(ids, ","),
+				"lang": lang,
 			}
 			if widthSet {
 				body["width"] = width
@@ -203,6 +207,7 @@ Supports display width, centering, energy-saving mode, and material tag filters.
 	cmd.Flags().IntVar(&width, "width", 336, "Cloud phone display width in px (200-600, default 336)")
 	cmd.Flags().IntVar(&center, "center", 1, "Whether display is centered: 0=no, 1=yes (default 1)")
 	cmd.Flags().IntVar(&energySavingMode, "energy-saving", 0, "Energy-saving mode: 0=disabled, 1=enabled (auto shutdown after 30min idle)")
+	cmd.Flags().StringVar(&lang, "lang", "en-US", "Language (default en-US; supported: zh-CN, en-US, vi-VN, pt-BR, ru-RU, es-LA, uk-UA, ja-JP, zh-TW, id-ID, tr-TR, fr-FR)")
 	cmd.Flags().StringVar(&materialTagIds, "material-tag-ids", "", "Comma-separated material tag IDs (max 10, requires OEM)")
 	_ = cmd.MarkFlagRequired("ids")
 
