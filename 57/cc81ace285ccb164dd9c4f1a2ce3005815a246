@@ -1,0 +1,53 @@
+internal/mcpdocs/docs.go
+  s_00f395af12c3f6::t_15bce817af5335 79-82,91-92,95-100,105,110-112,114-121,148-151,158-159,161-168
+  s_00f395af12c3f6::t_60d8d58b75e019 101-104,106-109,113,122-132
+cmd/root.go
+  s_00f395af12c3f6::t_15bce817af5335 62,93,104
+skills/geelark-shared/SKILL.md
+  s_00f395af12c3f6::t_96d0dc31e05d17 21-23,26-27
+  s_00f395af12c3f6::t_3b29f4e3801931 28
+cmd/config/config.go
+  s_00f395af12c3f6::t_23e0b7d8860d0c 196,198-199,201-206,210
+  s_00f395af12c3f6::t_96d0dc31e05d17 6,8,43-45,49-50,52-53,67-68,79-80,91-92,103-106,143,148,150-164,170-171,173,175-177,179-184,207-209
+  s_00f395af12c3f6::t_0459eb2692eec1 188,192-194
+  s_00f395af12c3f6::t_1a890dbda6a248 166-168,172,174,186,189-190,197
+  s_00f395af12c3f6::t_60d8d58b75e019 5,54-65,69-70,72-75,81-88,93-100,124-142,144-147,149,165,169,178,185,187,191,195,200
+  s_00f395af12c3f6::t_3596e22aec5bc4 66
+  s_00f395af12c3f6::t_5667075f181be0 107
+  s_00f395af12c3f6::t_22832ec8d0c60d 211
+internal/mcpserver/tools_misc.go
+  s_00f395af12c3f6::t_96d0dc31e05d17 72,74-75
+main.go
+  s_00f395af12c3f6::t_15bce817af5335 15-18
+cmd/mcp/mcp.go
+  s_00f395af12c3f6::t_15bce817af5335 8-10,13,17-20,53-59,64-65,67,71-80
+  s_00f395af12c3f6::t_a2a0f2df39470b 81
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.2",
+  "base_commit_sha": "57cc81ace285ccb164dd9c4f1a2ce3005815a246",
+  "prompts": {},
+  "sessions": {
+    "s_00f395af12c3f6": {
+      "agent_id": {
+        "tool": "trae",
+        "id": "6a018088d5cd735a61e104f9",
+        "model": "glm-5.3__dev"
+      },
+      "human_author": "geelark-tech <geelark@geelark.com>",
+      "custom_attributes": {
+        "edit_kind": "bash",
+        "external_session_id": "6a018088d5cd735a61e104f9",
+        "source_scene": "agent",
+        "tool_name": "RunCommand",
+        "session_id": "6a018088d5cd735a61e104f9",
+        "operation_id": "6aa90a7dcf21b757dd2fc3c9",
+        "display_model_name": "GLM-5.3",
+        "client_type": "ide",
+        "runtime_client": "trae-tob-git-ai",
+        "tool_use_id": "6aa90a7dcf21b757dd2fc3c9"
+      }
+    }
+  }
+}
