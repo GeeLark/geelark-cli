@@ -1,0 +1,38 @@
+internal/mcpserver/tools_phone_automation.go
+  s_00f395af12c3f6::t_e4eca0f42d2bed 100-101
+  s_00f395af12c3f6::t_bed054e28d0062 87
+  s_00f395af12c3f6::t_adaaec0a0fd21b 98-99
+internal/mcpserver/tools_phone_system.go
+  s_00f395af12c3f6::t_bed054e28d0062 26
+  s_00f395af12c3f6::t_edd48e5f368f3a 25
+cmd/phone/automation.go
+  s_00f395af12c3f6::t_8b22dcb729e403 1953
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.2",
+  "base_commit_sha": "4097130e924957fce399d78e283cc9e30f923a33",
+  "prompts": {},
+  "sessions": {
+    "s_00f395af12c3f6": {
+      "agent_id": {
+        "tool": "trae",
+        "id": "6a018088d5cd735a61e104f9",
+        "model": "glm-5.3__dev"
+      },
+      "human_author": "geelark-tech <geelark@geelark.com>",
+      "custom_attributes": {
+        "display_model_name": "GLM-5.3",
+        "external_session_id": "6a018088d5cd735a61e104f9",
+        "client_type": "ide",
+        "operation_id": "6aa9100acf21b757dd2fc460",
+        "source_scene": "agent",
+        "session_id": "6a018088d5cd735a61e104f9",
+        "tool_name": "Edit",
+        "tool_use_id": "6aa9100acf21b757dd2fc460",
+        "edit_kind": "file_edit",
+        "runtime_client": "trae-tob-git-ai"
+      }
+    }
+  }
+}
