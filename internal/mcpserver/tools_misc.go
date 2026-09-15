@@ -69,9 +69,10 @@ func miscTools() []*routedTool {
 			summary: "CLI account & configuration: initialize credentials (token + API base URLs), check " +
 				"authentication status, show current configuration.",
 			actions: []action{
-				actAs(config, "config-init", "init", "Initialize CLI credentials: pass --token (required), "+
+				actAs(config, "config-init", "init", "Set CLI credentials: --token, "+
 					"--base-url (Cloud Phone API, default https://openapi.geelark.com), "+
-					"--browser-base-url (default http://localhost:40185)"),
+					"--browser-base-url (default http://localhost:40185). Settings are merged, so "+
+					"omitted flags keep their current value; --token is required only on first setup"),
 				actAs(auth, "auth-status", "status", "Check authentication status"),
 				actAs(config, "config-show", "show", "Show current CLI configuration"),
 			},

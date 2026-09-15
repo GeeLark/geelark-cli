@@ -12,7 +12,10 @@ import (
 // It is embedded here because go:embed cannot reach outside its own package
 // directory, and skills/ is published from the repository root.
 //
-//go:embed all:skills
+// The pattern deliberately omits the "all:" prefix so that dotfiles such as
+// .DS_Store stay out of the binary.
+//
+//go:embed skills
 var skillsFS embed.FS
 
 func main() {

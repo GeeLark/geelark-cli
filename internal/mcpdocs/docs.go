@@ -76,8 +76,10 @@ func firstHeading(doc string) string {
 
 // Get returns the reference document for a CLI command path
 // (e.g. "browser create", "phone automation tiktok-login").
-// The path may omit intermediate groups ("phone tiktok-login") — the lookup
-// falls back to suffix matching.
+// The path may omit leading groups ("tiktok-login" resolves to
+// "phone automation tiktok-login") — the lookup falls back to suffix matching.
+// When nothing matches, the error lists the closest known command paths so the
+// caller can retry with a full one.
 func (d *Docs) Get(command string) (string, error) {
 	if p, ok := d.Resolve(command); ok {
 		b, err := fs.ReadFile(d.fsys, p)
@@ -86,10 +88,48 @@ func (d *Docs) Get(command string) (string, error) {
 		}
 		return string(b), nil
 	}
-	if normalize(command) == "" {
+	cmd := normalize(command)
+	if cmd == "" {
 		return "", fmt.Errorf("empty command")
 	}
-	return "", fmt.Errorf("no reference doc found for command %q", normalize(command))
+	if s := d.suggest(cmd); len(s) > 0 {
+		return "", fmt.Errorf("no reference doc found for command %q; did you mean: %s", cmd, strings.Join(s, ", "))
+	}
+	return "", fmt.Errorf("no reference doc found for command %q", cmd)
+}
+
+// suggest returns up to five known command paths that contain every segment of
+// cmd in order, e.g. "phone tiktok-login" suggests "phone automation
+// tiktok-login". Requiring all segments keeps a command like "phone app list"
+// from proposing every unrelated "... list" there is.
+func (d *Docs) suggest(cmd string) []string {
+	want := strings.Fields(cmd)
+	if len(want) == 0 {
+		return nil
+	}
+
+	var out []string
+	for k := range d.index() {
+		if containsInOrder(strings.Fields(k), want) {
+			out = append(out, k)
+		}
+	}
+	sort.Strings(out)
+	if len(out) > 5 {
+		out = out[:5]
+	}
+	return out
+}
+
+// containsInOrder reports whether want appears in segments as a subsequence.
+func containsInOrder(segments, want []string) bool {
+	i := 0
+	for _, s := range segments {
+		if i < len(want) && s == want[i] {
+			i++
+		}
+	}
+	return i == len(want)
 }
 
 // Resolve maps a CLI command path to its reference file path.
@@ -105,19 +145,27 @@ func (d *Docs) Resolve(command string) (string, bool) {
 		return p, true
 	}
 
-	// Suffix match: allow omitting intermediate groups, e.g. "phone tiktok-login"
-	// matches "phone automation tiktok-login". Prefer the longest key.
+	// Suffix match: allow omitting leading groups, e.g. "tiktok-login" matches
+	// "phone automation tiktok-login". A bare verb such as "list" matches many
+	// keys; prefer the one closest to what was asked for (fewest segments) and
+	// break ties alphabetically so the result is deterministic across runs.
 	keys := make([]string, 0, len(lookup))
 	for k := range lookup {
 		if strings.HasSuffix(k, " "+cmd) {
 			keys = append(keys, k)
 		}
 	}
-	sort.Strings(keys) // longest last
-	if len(keys) > 0 {
-		return lookup[keys[len(keys)-1]], true
+	if len(keys) == 0 {
+		return "", false
 	}
-	return "", false
+	sort.Slice(keys, func(i, j int) bool {
+		ni, nj := len(strings.Fields(keys[i])), len(strings.Fields(keys[j]))
+		if ni != nj {
+			return ni < nj
+		}
+		return keys[i] < keys[j]
+	})
+	return lookup[keys[0]], true
 }
 
 func normalize(command string) string {

@@ -5,10 +5,18 @@ import (
 	"errors"
 	"io"
 	"io/fs"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/geelark-tech/geelark-cli/internal/mcpserver"
+	"github.com/modelcontextprotocol/go-sdk/jsonrpc"
 	"github.com/spf13/cobra"
 )
+
+// codeServerClosing is the JSON-RPC code the MCP SDK reports when the
+// connection is torn down while the server is shutting down.
+const codeServerClosing = -32004
 
 const mcpLong = `Run geelark-cli as a Model Context Protocol (MCP) server over stdio.
 
@@ -42,16 +50,32 @@ func NewCmd(skillsFS fs.FS, version string) *cobra.Command {
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		RunE: func(cmd *cobra.Command, _ []string) error {
+			// Signals are handled here rather than in the root command: the
+			// server is the only command long-lived enough to need a graceful
+			// shutdown, and intercepting signals globally would stop Ctrl+C
+			// from killing the other commands, which never read this context.
+			ctx, stop := signal.NotifyContext(cmd.Context(), os.Interrupt, syscall.SIGTERM)
+			defer stop()
+
 			srv := mcpserver.New(mcpserver.Options{
 				SkillsFS: skillsFS,
 				Version:  version,
 			})
-			err := srv.Run(cmd.Context())
-			// A client closing the pipe, or a signal, is a normal shutdown.
-			if errors.Is(err, io.EOF) || errors.Is(err, context.Canceled) {
-				return nil
+			if err := srv.Run(ctx); err != nil && !isShutdown(err) {
+				return err
 			}
-			return err
+			return nil
 		},
 	}
+}
+
+// isShutdown reports whether err is the client closing the pipe or a signal,
+// both of which are normal ways for the server to stop.
+//
+// The SDK reports a closed connection as a jsonrpc.Error wrapping the
+// underlying cause with %v, so the io.EOF check alone misses it.
+func isShutdown(err error) bool {
+	return errors.Is(err, io.EOF) ||
+		errors.Is(err, context.Canceled) ||
+		errors.Is(err, &jsonrpc.Error{Code: codeServerClosing})
 }

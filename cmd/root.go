@@ -1,12 +1,9 @@
 package cmd
 
 import (
-	"context"
 	"fmt"
 	"io/fs"
 	"os"
-	"os/signal"
-	"syscall"
 
 	"github.com/geelark-tech/geelark-cli/cmd/auth"
 	"github.com/geelark-tech/geelark-cli/cmd/billing"
@@ -62,7 +59,7 @@ DOCS:
 More help: geelark-cli <command> --help`
 
 // Execute runs the root command and returns the process exit code.
-// skillsFS holds the embedded skills reference docs served by the mcp command.
+// skillsFS carries the embedded skills reference docs served by the mcp command.
 func Execute(skillsFS fs.FS) int {
 	var formatFlag string
 
@@ -93,6 +90,7 @@ func Execute(skillsFS fs.FS) int {
 		return client.New(cfg), nil
 	}
 
+	// Register sub-commands
 	rootCmd.AddCommand(cmdconfig.NewCmd())
 	rootCmd.AddCommand(auth.NewCmd(newClient))
 	rootCmd.AddCommand(phone.NewCmd(newClient))
@@ -103,10 +101,7 @@ func Execute(skillsFS fs.FS) int {
 	rootCmd.AddCommand(billing.NewCmd(newClient))
 	rootCmd.AddCommand(cmdmcp.NewCmd(skillsFS, build.Version))
 
-	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
-	defer stop()
-
-	if err := rootCmd.ExecuteContext(ctx); err != nil {
+	if err := rootCmd.Execute(); err != nil {
 		fmt.Fprintln(os.Stderr, "Error:", err)
 		return 1
 	}

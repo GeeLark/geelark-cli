@@ -18,7 +18,13 @@ geelark-cli config init
 
 # Provide token directly
 geelark-cli config init --token "your_api_token"
+
+# Change only the Cloud Phone API endpoint, keeping the stored token
+geelark-cli config init --base-url "https://openapi.geelark.com"
 ```
+
+Settings are merged into the existing configuration: flags you omit keep their
+current value, so changing the token does not reset a custom endpoint.
 
 You can find your API Token in the GeeLark client Settings page.
 
