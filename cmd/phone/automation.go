@@ -1950,7 +1950,7 @@ func newKeyboxUploadCmd(newClient clientFactory) *cobra.Command {
 	cmd.Flags().StringVar(&name, "name", "", "Task name (max 128 chars)")
 	cmd.Flags().StringVar(&remark, "remark", "", "Remark (max 200 chars)")
 	cmd.Flags().Int64Var(&scheduleAt, "schedule-at", 0, "Schedule time, second-level timestamp (required)")
-	cmd.Flags().StringVar(&files, "files", "", "Comma-separated file URLs, max 100 (required)")
+	cmd.Flags().StringVar(&files, "files", "", "Keybox file URL, max 1 (required)")
 	_ = cmd.MarkFlagRequired("id")
 	_ = cmd.MarkFlagRequired("schedule-at")
 	_ = cmd.MarkFlagRequired("files")

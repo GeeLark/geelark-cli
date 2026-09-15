@@ -84,7 +84,7 @@ func phoneAutomationTools() []*routedTool {
 		{
 			name: "geelark_phone_task",
 			summary: "Cloud phone automation task management (geelark-cli phone automation ...): query, cancel, retry " +
-				"tasks, and create/import/export custom task flows.",
+				"tasks, create/import/export custom task flows, and schedule a keybox upload.",
 			actions: []action{
 				act(auto, "task-query", "Query cloud phone tasks by IDs"),
 				act(auto, "task-history", "Batch query task history"),
@@ -95,6 +95,10 @@ func phoneAutomationTools() []*routedTool {
 				act(auto, "task-flow-list", "Query custom task flows"),
 				act(auto, "task-flow-import", "Import or update a custom task flow"),
 				act(auto, "task-flow-export", "Export a custom task flow"),
+				// Scheduled keybox upload task (distinct from the immediate
+				// geelark_phone_file keybox-upload, which hits a different API).
+				act(auto, "keybox-upload", "Schedule a keybox upload task (RPA) to run at a given time, one file "+
+					"URL. To upload one keybox right away use geelark_phone_file keybox-upload instead"),
 			},
 		},
 	}

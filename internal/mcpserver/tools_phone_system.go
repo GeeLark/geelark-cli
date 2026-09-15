@@ -22,7 +22,8 @@ func phoneSystemTools() []*routedTool {
 				act(file, "upload-to-phone", "Upload a file to a cloud phone"),
 				act(file, "upload-temp", "Upload a local file to GeeLark temporary storage"),
 				act(file, "upload-status", "Query the upload status of a file to the cloud phone"),
-				act(file, "keybox-upload", "Upload a keybox file to a cloud phone"),
+				act(file, "keybox-upload", "Upload one keybox file to a cloud phone immediately. To schedule one "+
+					"for later use geelark_phone_task keybox-upload instead"),
 				act(file, "keybox-result", "Query the keybox upload task result"),
 				act(auto, "file-upload", "Upload files to the cloud phone in batches (automation)"),
 				act(auto, "import-contacts", "Batch import contacts to cloud phone (automation)"),
