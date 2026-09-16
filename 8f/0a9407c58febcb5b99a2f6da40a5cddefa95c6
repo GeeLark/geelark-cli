@@ -1,0 +1,33 @@
+README.md
+  s_00f395af12c3f6::t_6f9b869798e4dc 618-631,633-658
+  s_00f395af12c3f6::t_4be2a6349baa11 102-141
+  s_00f395af12c3f6::t_6be39c33741b0c 632
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.2",
+  "base_commit_sha": "8f0a9407c58febcb5b99a2f6da40a5cddefa95c6",
+  "prompts": {},
+  "sessions": {
+    "s_00f395af12c3f6": {
+      "agent_id": {
+        "tool": "trae",
+        "id": "6a018088d5cd735a61e104f9",
+        "model": "glm-5.3__dev"
+      },
+      "human_author": "geelark-tech <geelark@geelark.com>",
+      "custom_attributes": {
+        "operation_id": "6aaa6a1100a387a865a6438c",
+        "tool_name": "Edit",
+        "client_type": "ide",
+        "source_scene": "agent",
+        "tool_use_id": "6aaa6a1100a387a865a6438c",
+        "external_session_id": "6a018088d5cd735a61e104f9",
+        "display_model_name": "GLM-5.3",
+        "runtime_client": "trae-tob-git-ai",
+        "session_id": "6a018088d5cd735a61e104f9",
+        "edit_kind": "file_edit"
+      }
+    }
+  }
+}
