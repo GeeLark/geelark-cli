@@ -110,6 +110,17 @@ Two API endpoints are configurable:
 			}
 
 			output.PrintSuccess(fmt.Sprintf("Configuration saved to %s", config.ConfigFile()))
+
+			// Saving is not the same as taking effect: an override set in the
+			// environment still wins on the next run, which otherwise looks
+			// like the new credentials were ignored. This goes to stdout
+			// rather than stderr because the MCP server drops stderr from
+			// successful runs, and an agent editing credentials it cannot use
+			// is exactly who needs to be told.
+			if names := config.EnvOverrides(); len(names) > 0 {
+				fmt.Printf("Warning: %s set in the environment and still take precedence; unset to use the saved file\n",
+					strings.Join(names, ", "))
+			}
 			return nil
 		},
 	}
@@ -214,20 +225,38 @@ func newShowCmd() *cobra.Command {
 		Use:   "show",
 		Short: "Show current configuration",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cfg, err := config.Load()
+			// Deliberately not config.Load: showing the resolved endpoints and
+			// overrides is most useful exactly when no token is set yet.
+			cfg, err := config.LoadForDisplay()
 			if err != nil {
 				return err
 			}
 
-			fmt.Printf("Config file:        %s\n", config.ConfigFile())
+			// Load succeeds without a file when the token comes from the
+			// environment, so say when the path is not actually there.
+			path := config.ConfigFile()
+			if _, err := os.Stat(path); errors.Is(err, os.ErrNotExist) {
+				path += " (not created yet)"
+			}
+			fmt.Printf("Config file:        %s\n", path)
 			fmt.Printf("Cloud Phone API:    %s\n", cfg.BaseURL)
 			fmt.Printf("Browser API:        %s\n", cfg.BrowserBaseURL)
 			// Mask token for security
 			masked := cfg.Token
-			if len(masked) > 8 {
+			switch {
+			case masked == "":
+				masked = "(not set — run `geelark-cli config init`)"
+			case len(masked) > 8:
 				masked = masked[:4] + "****" + masked[len(masked)-4:]
 			}
 			fmt.Printf("Token:              %s\n", masked)
+
+			// Show which env overrides are active, so the difference between
+			// the file content and the effective values is not confusing.
+			if names := config.EnvOverrides(); len(names) > 0 {
+				fmt.Printf("Env overrides:      %s (these take precedence over the file)\n",
+					strings.Join(names, ", "))
+			}
 			return nil
 		},
 	}

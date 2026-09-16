@@ -25,7 +25,12 @@ cloud phones, browsers, proxies, groups, tags and billing. Each tool call
 forks this same binary, so the MCP tools always match the CLI surface and
 the child's stdout never touches the MCP transport.
 
-Authentication is shared with the CLI: run "geelark-cli config init" first.
+Authentication is shared with the CLI: run "geelark-cli config init" first,
+or set credentials via environment variables (they override the config file):
+
+    GEELARK_TOKEN            API token (with this set, no config file is needed)
+    GEELARK_BASE_URL         Cloud Phone API base URL
+    GEELARK_BROWSER_BASE_URL Browser API base URL
 
 While the server is running stdout carries the MCP protocol and nothing else;
 diagnostics go to stderr.
@@ -35,7 +40,11 @@ CLIENT CONFIGURATION:
       "mcpServers": {
         "geelark": {
           "command": "npx",
-          "args": ["-y", "geelark-cli", "mcp"]
+          "args": ["-y", "geelark-cli", "mcp"],
+          "env": {
+            "GEELARK_TOKEN": "<your-token>",
+            "GEELARK_BASE_URL": "https://openapi.geelark.com"
+          }
         }
       }
     }`
