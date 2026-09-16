@@ -99,6 +99,46 @@ npx skills@latest add geelark-tech/geelark-cli -g --all -y
 
 This registers all geelark-cli skills globally, making them available in Trae, Cursor, Claude Code, Cline, and other supported AI Agents.
 
+## Use as MCP Server
+
+`geelark-cli` can run as an [MCP](https://modelcontextprotocol.io/) server, exposing all CLI capabilities (cloud phone, browser, proxy, group, tag, billing, docs) as MCP tools.
+
+Add the following to your MCP client config (e.g. `~/.trae/mcp/mcp.json` for Trae, `~/.cursor/mcp.json` for Cursor, or `claude mcp add` for Claude Code):
+
+```json
+{
+  "mcpServers": {
+    "geelark": {
+      "command": "npx",
+      "args": ["-y", "geelark-cli@latest", "mcp"],
+      "env": {
+        "GEELARK_TOKEN": "xxxxxx",
+        "GEELARK_BASE_URL": "https://openapi.geelark.com",
+        "GEELARK_BROWSER_BASE_URL": "http://localhost:40185"
+      }
+    }
+  }
+}
+```
+
+Notes:
+
+- `GEELARK_TOKEN` — your GeeLark API token (get it from the GeeLark client settings page). Required.
+- `GEELARK_BASE_URL` — optional, defaults to `https://openapi.geelark.com`. Only set this to override.
+- `GEELARK_BROWSER_BASE_URL` — optional, local browser API endpoint, defaults to `http://localhost:40185`.
+- Environment variables take precedence over the config file (`~/.geelark/config.json`). Alternatively, omit the `env` block and run `geelark-cli config init --token "your_token"` once — the server shares the same config as the CLI.
+- If you already have the binary installed locally, you can point `command` to it directly and drop `npx`:
+
+```json
+{
+  "mcpServers": {
+    "geelark": {
+      "command": "geelark-cli",
+      "args": ["mcp"]
+    }
+  }
+}
+```
 
 ## Output Format
 
@@ -574,6 +614,47 @@ npx skills@latest add geelark-tech/geelark-cli -g --all -y
 ```
 
 此命令会全局注册所有 geelark-cli skills，使其在 Trae、Cursor、Claude Code、Cline 等支持的 AI Agent 中可用。
+
+## 作为 MCP Server 使用
+
+`geelark-cli` 可以作为 [MCP](https://modelcontextprotocol.io/) 服务器运行，将全部 CLI 能力（云手机、浏览器、代理、分组、标签、支付、文档查询）以 MCP 工具的形式暴露。
+
+在 MCP 客户端配置中加入以下内容（如 Trae 的 `~/.trae/mcp/mcp.json`、Cursor 的 `~/.cursor/mcp.json`，或 Claude Code 的 `claude mcp add`）：
+
+```json
+{
+  "mcpServers": {
+    "geelark": {
+      "command": "npx",
+      "args": ["-y", "geelark-cli@latest", "mcp"],
+      "env": {
+        "GEELARK_TOKEN": "xxxxxx",
+        "GEELARK_BASE_URL": "https://openapi.geelark.cn",
+        "GEELARK_BROWSER_BASE_URL": "http://localhost:40185"
+      }
+    }
+  }
+}
+```
+
+说明：
+
+- `GEELARK_TOKEN` — 你的 GeeLark API Token（可在 GeeLark 客户端设置页面获取），必填。
+- `GEELARK_BASE_URL` — 可选，默认 `https://openapi.geelark.com`，仅在需要覆盖时设置。
+- `GEELARK_BROWSER_BASE_URL` — 可选，本地浏览器 API 端点，默认 `http://localhost:40185`。
+- 环境变量优先级高于配置文件（`~/.geelark/config.json`）。也可以省略 `env` 块，先执行一次 `geelark-cli config init --token "your_token"` —— MCP 服务器与 CLI 共享同一份配置。
+- 如果本地已安装二进制，可以直接将 `command` 指向它，省去 `npx`：
+
+```json
+{
+  "mcpServers": {
+    "geelark": {
+      "command": "geelark-cli",
+      "args": ["mcp"]
+    }
+  }
+}
+```
 
 ## 输出格式
 
