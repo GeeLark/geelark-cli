@@ -1,0 +1,42 @@
+internal/config/config.go
+  s_00f395af12c3f6::t_a0dc75b342f8e2 69-70,72,74-88,93-97,101-104,106,110-114
+  s_00f395af12c3f6::t_e5bde61d802c6d 89-92,98-99,116,118-119,121-122,124
+  s_00f395af12c3f6::t_3f7e9dd78026cd 8,40-68,117,120,123
+  s_00f395af12c3f6::t_2f983c3c5e0423 100
+  s_00f395af12c3f6::t_05c925b2818a4f 115
+cmd/config/config.go
+  s_00f395af12c3f6::t_3f7e9dd78026cd 113-115,120,122-123,235-241,256,258
+  s_00f395af12c3f6::t_00957308523140 254-255,257,259
+  s_00f395af12c3f6::t_499d7c766d88d1 253
+  s_00f395af12c3f6::t_a0dc75b342f8e2 116-119,121,228-230,246-249
+cmd/mcp/mcp.go
+  s_00f395af12c3f6::t_4888f109bedc2a 28-33,43-47
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.2",
+  "base_commit_sha": "2e4f00a920e3f3838f45324a4c32b7ee5da9d65c",
+  "prompts": {},
+  "sessions": {
+    "s_00f395af12c3f6": {
+      "agent_id": {
+        "tool": "trae",
+        "id": "6a018088d5cd735a61e104f9",
+        "model": "glm-5.3__dev"
+      },
+      "human_author": "geelark-tech <geelark@geelark.com>",
+      "custom_attributes": {
+        "external_session_id": "6a018088d5cd735a61e104f9",
+        "source_scene": "agent",
+        "tool_use_id": "6aaa5c4bcf21b757dd2fcd55",
+        "session_id": "6a018088d5cd735a61e104f9",
+        "runtime_client": "trae-tob-git-ai",
+        "tool_name": "RunCommand",
+        "edit_kind": "bash",
+        "display_model_name": "GLM-5.3",
+        "client_type": "ide",
+        "operation_id": "6aaa5c4bcf21b757dd2fcd55"
+      }
+    }
+  }
+}
