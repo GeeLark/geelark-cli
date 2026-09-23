@@ -14,6 +14,32 @@ Update cloud phone information. **Do not call while starting a cloud phone.**
 | `--proxy-id <text>` | Proxy ID |
 | `--data <json>` | Additional JSON data (e.g. proxyConfig, chargeMode, phoneNumber) |
 
+### Proxy Config (proxyConfig in --data)
+
+Static proxy (typeId 1=socks5, 2=http, 3=https, -1=no proxy):
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `typeId` | Yes | Proxy type ID |
+| `server` | Yes | Proxy server hostname |
+| `port` | Yes | Proxy server port |
+| `username` | Yes | Proxy server username |
+| `password` | Yes | Proxy server password |
+
+Dynamic proxy (typeId 21=IPHTML, 22=kookeey, 23=Lumatuo(BrightData), 24=Proxyma, 25=SmartProxy, 26=RolaIP, 27=NodeMaven, 29=KookeeyMobile, 30=GProxy Residential). Set `useProxyCfg: true` to reuse the already configured proxy without host/port:
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `useProxyCfg` | Yes | Use the already configured proxy |
+| `typeId` | Yes | Proxy type ID (dynamic list above) |
+| `protocol` | No | Proxy protocol: 1=SOCKS5, 2=HTTP |
+| `server`/`port`/`username`/`password` | No | Proxy connection details |
+| `country` | No | Dynamic proxy country code |
+| `region` | No | Dynamic proxy region |
+| `city` | No | Dynamic proxy city |
+| `sessionType` | No | GProxy session type: 1=Sticky, 2=Rotating (default 1) |
+| `filterMode` | No | GProxy filter mode: 0=MaxPoolSize, 1=Quality, 2=QualitySpeed, 3=Speed |
+
 ## Examples
 
 ```bash
@@ -28,6 +54,9 @@ geelark-cli phone update --id "phone_id" --data "{\"proxyConfig\":{\"typeId\":1,
 
 # Update charge mode
 geelark-cli phone update --id "phone_id" --data "{\"chargeMode\":1}"
+
+# Update proxy to GProxy residential dynamic proxy
+geelark-cli phone update --id "phone_id" --data "{\"proxyConfig\":{\"useProxyCfg\":true,\"typeId\":30,\"sessionType\":1,\"filterMode\":1}}"
 ```
 
 ## Response Fields

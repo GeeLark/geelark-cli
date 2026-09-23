@@ -68,7 +68,7 @@ Create a new browser environment with full configuration via JSON. Supports acco
 
 | Parameter | Required | Type | Description |
 |-----------|----------|------|-------------|
-| `typeId` | Yes | integer | Proxy type: -1=Direct, 1=socks5, 2=http, 3=https, 20=IPIDEA, 21=IPHTML, 22=kookeey, 23=Lumatuo |
+| `typeId` | Yes | integer | Proxy type: -1=Direct, 1=socks5, 2=http, 3=https, 20=IPIDEA, 21=IPHTML, 22=kookeey, 23=Lumatuo, 30=GProxy Residential Proxies |
 | `server` | No | string | Proxy host |
 | `port` | No | integer | Proxy port |
 | `username` | No | string | Proxy username |
@@ -78,6 +78,8 @@ Create a new browser environment with full configuration via JSON. Supports acco
 | `city` | No | string | Dynamic proxy city |
 | `useProxyCfg` | No | bool | Use configured dynamic proxy |
 | `protocol` | No | integer | Dynamic proxy protocol: 1=socks5, 2=http |
+| `sessionType` | No | integer | GProxy session type: 1=Sticky, 2=Rotating (default 1) |
+| `filterMode` | No | integer | GProxy filter mode: 0=MaxPoolSize, 1=Quality, 2=QualitySpeed, 3=Speed |
 
 ## Examples
 

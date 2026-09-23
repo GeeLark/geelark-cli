@@ -44,6 +44,7 @@ These fields go in the root of the `--data` JSON object:
 | `gameName` | No | string | Game name, max 256 chars |
 | `location` | No | string | Location, max 500 chars |
 | `index` | No | integer | Product selection index when multiple products share the same name, 1-100; 0 or unset = first product |
+| `qrcode` | No | string | QR code image URL. Used when publishing a project via QR code |
 
 Example:
 
@@ -76,6 +77,7 @@ Example:
 | `action` | Yes | string | Warmup action: `search profile`, `search video`, or `browse video` |
 | `keywords` | No | array[string] | Search keywords; required for `search profile` / `search video`, optional for `browse video` |
 | `duration` | Yes | integer | Browsing duration in minutes |
+| `probability` | No | object | Warmup behavior probability configuration; if not provided, default behavior is used. Fields: `hasKey` (object, behavior probabilities when keywords are found) and `noKey` (object, behavior probabilities when no keywords are found). Each of `hasKey`/`noKey` contains `like`, `follow`, `readComment`, `collect` (integer, 0-100) |
 
 Example:
 
@@ -88,7 +90,11 @@ Example:
     "envId": "123456654321",
     "action": "search video",
     "keywords": ["hi"],
-    "duration": 10
+    "duration": 10,
+    "probability": {
+      "hasKey": { "like": 30, "follow": 10, "readComment": 30, "collect": 20 },
+      "noKey": { "like": 15, "follow": 5, "readComment": 15, "collect": 10 }
+    }
   }]
 }
 ```

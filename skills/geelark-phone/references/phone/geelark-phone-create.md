@@ -16,12 +16,15 @@ Batch create cloud phones. Basic plan supports 1 at a time; Pro plan supports ba
 | Parameter | Required | Description |
 |-----------|----------|-------------|
 | `profileName` | Yes | Cloud phone name |
-| `proxyInformation` | No | Proxy string, e.g. socks5://user:pass@host:port |
+| `proxyInformation` | No | Proxy string, e.g. socks5://user:pass@host:port; set `LocalNetwork` to use no proxy (requires client network extension enabled) |
 | `refreshUrl` | No | Proxy refresh URL |
 | `proxyQueryChannel` | No | Proxy detection: 1=ip-api, 2=IP2Location (default 2) |
 | `proxyNumber` | No | Serial number of an added proxy |
-| `dynamicProxy` | No | Saved dynamic proxy name |
-| `dynamicProxyLocation` | No | Dynamic proxy country code |
+| `dynamicProxy` | No | Saved dynamic proxy: IPHTML/kookeey/Luminati(BrightData)/rolaip/Proxyma/DECODO/NodeMaven/kookeeyMobile/GProxyResidential |
+| `dynamicProxyLocation` | No | Dynamic proxy country code, required when `dynamicProxy` is set |
+| `protocol` | No | GProxy protocol: 1=socks5, 2=http (default socks5) |
+| `sessionType` | No | GProxy session type: 1=Sticky, 2=Rotating (default 1) |
+| `filterMode` | No | GProxy filter mode: 0=MaxPoolSize, 1=Quality, 2=QualitySpeed, 3=Speed |
 | `mobileRegion` | No | Cloud phone region (follows proxy if empty) |
 | `mobileProvince` | No | State (US only, follows proxy if empty) |
 | `mobileCity` | No | City (US only, follows proxy if empty) |
@@ -48,6 +51,9 @@ geelark-cli phone create --region "sgp" --mobile-type "Android 12" --data "[{\"p
 
 # Create with group and tags
 geelark-cli phone create --region "cn" --mobile-type "Android 13" --data "[{\"profileName\":\"phone1\",\"profileGroup\":\"marketing\",\"profileTags\":[\"tiktok\"]}]"
+
+# Create with GProxy dynamic proxy
+geelark-cli phone create --region "sgp" --mobile-type "Android 15" --data "[{\"profileName\":\"myPhone\",\"dynamicProxy\":\"GProxyResidential\",\"dynamicProxyLocation\":\"us\",\"protocol\":1,\"sessionType\":1,\"filterMode\":1}]"
 ```
 
 ## Response Fields

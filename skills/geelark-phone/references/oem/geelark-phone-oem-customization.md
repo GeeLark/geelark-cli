@@ -11,6 +11,7 @@ Customize OEM/White Label settings. Requires a plan with 50+ profiles.
 | `--hide-header` | Hide the header at the top of the cloud phone |
 | `--hide-sidebar` | Hide the sidebar |
 | `--mirror-url <text>` | QR code/Mirror entrance URL, max 255 chars |
+| `--custom-domain <text>` | Custom domain name, max 255 chars, no `http://` or `https://` prefix (e.g. `phone.example.com`); pass an empty string `""` to clear it |
 | `--toolbar <json>` | JSON array of toolbar settings `[{"toolBar":"...","visible":bool,"iconUrl":"..."}]` |
 
 ### Toolbar Items
@@ -28,6 +29,12 @@ geelark-cli phone oem customization --hide-header --mirror-url "https://www.abcd
 
 # Hide sidebar
 geelark-cli phone oem customization --hide-sidebar
+
+# Set custom domain (requires the domain to be configured first, e.g. via Cloudflare; see OEM Custom Domain guide)
+geelark-cli phone oem customization --custom-domain "phone.example.com"
+
+# Clear custom domain
+geelark-cli phone oem customization --custom-domain ""
 
 # Customize toolbar
 geelark-cli phone oem customization --toolbar "[{\"toolBar\":\"networkQuality\",\"visible\":false},{\"toolBar\":\"rotate\",\"visible\":false}]"
