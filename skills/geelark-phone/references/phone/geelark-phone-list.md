@@ -54,6 +54,7 @@ geelark-cli phone list --ids "id1,id2"
 | `items[].monthlyExpire` | integer | Monthly expiration timestamp (seconds) |
 | `items[].rpaStatus` | integer | RPA running: 1=running, 0=not running |
 | `items[].createTime` | integer | Creation timestamp (seconds) |
+| `items[].systemVer` | string | System version |
 | `items[].group` | object | Group info |
 | `items[].group.id` | string | Group ID |
 | `items[].group.name` | string | Group name |

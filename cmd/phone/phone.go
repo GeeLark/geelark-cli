@@ -158,7 +158,8 @@ func newStartCmd(newClient clientFactory) *cobra.Command {
 	var ids, lang string
 	var width, center, energySavingMode int
 	var materialTagIds string
-	var widthSet, centerSet, energySavingSet, langSet bool
+	var darkMode bool
+	var widthSet, centerSet, energySavingSet, langSet, darkModeSet bool
 
 	cmd := &cobra.Command{
 		Use:   "start",
@@ -195,6 +196,9 @@ Supports display width, centering, energy-saving mode, language, and material ta
 			if materialTagIds != "" {
 				body["materialTagIds"] = strings.Split(materialTagIds, ",")
 			}
+			if darkModeSet {
+				body["darkMode"] = darkMode
+			}
 
 			result, err := c.PostAndPrint("/open/v1/phone/start", body)
 			if err != nil {
@@ -211,6 +215,7 @@ Supports display width, centering, energy-saving mode, language, and material ta
 	cmd.Flags().IntVar(&energySavingMode, "energy-saving", 0, "Energy-saving mode: 0=disabled, 1=enabled (auto shutdown after 30min idle)")
 	cmd.Flags().StringVar(&lang, "lang", "", "Language, optional (supported: zh-CN, en-US, vi-VN, pt-BR, ru-RU, es-LA, uk-UA, ja-JP, zh-TW, id-ID, tr-TR, fr-FR); if omitted the server default applies")
 	cmd.Flags().StringVar(&materialTagIds, "material-tag-ids", "", "Comma-separated material tag IDs (max 10, requires OEM)")
+	cmd.Flags().BoolVar(&darkMode, "dark-mode", false, "Whether to enable dark mode: 0=disabled (default), 1=enabled (i.e. dark theme)")
 	_ = cmd.MarkFlagRequired("ids")
 
 	cmd.PreRunE = func(cmd *cobra.Command, args []string) error {
