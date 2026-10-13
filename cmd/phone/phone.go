@@ -35,6 +35,9 @@ func NewCmd(newClient clientFactory) *cobra.Command {
 	cmd.AddCommand(newSetGPSCmd(newClient))
 	cmd.AddCommand(newResetCmd(newClient))
 	cmd.AddCommand(newSetRootCmd(newClient))
+	cmd.AddCommand(newGetRootStatusCmd(newClient))
+	cmd.AddCommand(newUiDumpCmd(newClient))
+	cmd.AddCommand(newUiDumpResultCmd(newClient))
 	cmd.AddCommand(newGetDeviceIDCmd(newClient))
 	cmd.AddCommand(newSendSMSCmd(newClient))
 	cmd.AddCommand(newBrandListCmd(newClient))
@@ -897,6 +900,94 @@ Supports Android 12/13/14/15/16. Cloud phone must be started first.`,
 	cmd.Flags().StringVar(&ids, "ids", "", "Comma-separated cloud phone IDs (required)")
 	cmd.Flags().BoolVar(&open, "open", true, "Enable (true) or disable (false) root")
 	_ = cmd.MarkFlagRequired("ids")
+	return cmd
+}
+
+func newGetRootStatusCmd(newClient clientFactory) *cobra.Command {
+	var ids string
+
+	cmd := &cobra.Command{
+		Use:     "get-root-status",
+		Short:   "Get root status of cloud phones",
+		Long:    "Query whether root is enabled on cloud phones. Batch results are returned per phone.",
+		Example: `  geelark-cli phone get-root-status --ids "id1,id2"`,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			c, err := newClient()
+			if err != nil {
+				return err
+			}
+			body := map[string]interface{}{
+				"ids": strings.Split(ids, ","),
+			}
+			result, err := c.PostAndPrint("/open/v1/root/getStatus", body)
+			if err != nil {
+				return err
+			}
+			fmt.Println(result)
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&ids, "ids", "", "Comma-separated cloud phone IDs, 1-100 (required)")
+	_ = cmd.MarkFlagRequired("ids")
+	return cmd
+}
+
+func newUiDumpCmd(newClient clientFactory) *cobra.Command {
+	var id string
+
+	cmd := &cobra.Command{
+		Use:   "ui-dump",
+		Short: "Dump cloud phone UI layout (async)",
+		Long: `Dump the UI layout of a cloud phone for automation element locating.
+Returns a taskId; query the result with "phone ui-dump-result" within 30 minutes.`,
+		Example: `  geelark-cli phone ui-dump --id "phone_id"`,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			c, err := newClient()
+			if err != nil {
+				return err
+			}
+			body := map[string]interface{}{"id": id}
+			result, err := c.PostAndPrint("/open/v1/phone/uiDump", body)
+			if err != nil {
+				return err
+			}
+			fmt.Println(result)
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&id, "id", "", "Cloud phone ID (required)")
+	_ = cmd.MarkFlagRequired("id")
+	return cmd
+}
+
+func newUiDumpResultCmd(newClient clientFactory) *cobra.Command {
+	var taskId string
+
+	cmd := &cobra.Command{
+		Use:   "ui-dump-result",
+		Short: "Get UI Dump task result",
+		Long: `Query the status of a cloud phone UI Dump task.
+The result can be retrieved within 30 minutes after requesting UI Dump.`,
+		Example: `  geelark-cli phone ui-dump-result --task-id "task_id"`,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			c, err := newClient()
+			if err != nil {
+				return err
+			}
+			body := map[string]interface{}{"taskId": taskId}
+			result, err := c.PostAndPrint("/open/v1/phone/uiDump/result", body)
+			if err != nil {
+				return err
+			}
+			fmt.Println(result)
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&taskId, "task-id", "", "UI Dump task ID (required)")
+	_ = cmd.MarkFlagRequired("task-id")
 	return cmd
 }
 

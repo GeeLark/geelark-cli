@@ -8,7 +8,7 @@ Quick create a single browser with just the required fields. Use `create` for fu
 |------|-------------|
 | `--serial-name <text>` | Browser name, max 100 chars (required) |
 | `--browser-os <n>` | OS: 1=Win, 2=Mac (required) |
-| `--browser-kernel-ver <text>` | Browser kernel version: 134,138,142,143,144,145,146,147,148,149,150,auto (default auto) |
+| `--browser-kernel-ver <text>` | Kernel version; select an available version via [`get-kernels`](geelark-browser-get-kernels.md), or fill in "auto" for automatic selection. Leaving it blank also defaults to "auto" |
 | `--ext-group <text>` | Extension category ID (empty = team extensions). Query available IDs via [`ext-group-list`](geelark-browser-ext-group-list.md). |
 
 ## Examples
