@@ -15,6 +15,7 @@ YouTube publish Short.
 | `--same-style-voice <n>` | Same style volume, 0-100 (required; send 0 if not using same style) |
 | `--original-voice <n>` | Original voice volume, 0-100 (required; send 0 if not using same style) |
 | `--is-disclosure-mandatory` | Whether to force disclosure (default false) |
+| `--need-share-link` | Whether to retrieve the sharing link (default false) |
 | `--name <text>` | Task name (max 128 chars) |
 | `--remark <text>` | Remark (max 200 chars) |
 

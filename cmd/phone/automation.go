@@ -1203,7 +1203,7 @@ func newYouTubePubShortCmd(newClient clientFactory) *cobra.Command {
 	var id, name, remark, title, video, sameStyleUrl string
 	var scheduleAt int64
 	var sameStyleVoice, originalVoice int
-	var isDisclosureMandatory bool
+	var isDisclosureMandatory, needShareLink bool
 	cmd := &cobra.Command{
 		Use:     "youtube-pub-short",
 		Short:   "YouTube publish Short",
@@ -1226,6 +1226,9 @@ func newYouTubePubShortCmd(newClient clientFactory) *cobra.Command {
 			if isDisclosureMandatory {
 				body["isDisclosureMandatory"] = true
 			}
+			if needShareLink {
+				body["needShareLink"] = true
+			}
 			result, err := c.PostAndPrint("/open/v1/rpa/task/youtubePubShort", body)
 			if err != nil {
 				return err
@@ -1244,6 +1247,7 @@ func newYouTubePubShortCmd(newClient clientFactory) *cobra.Command {
 	cmd.Flags().IntVar(&sameStyleVoice, "same-style-voice", 0, "Same style volume, 0-100 (required)")
 	cmd.Flags().IntVar(&originalVoice, "original-voice", 0, "Original voice volume, 0-100 (required)")
 	cmd.Flags().BoolVar(&isDisclosureMandatory, "is-disclosure-mandatory", false, "Whether to force disclosure, defaults to false")
+	cmd.Flags().BoolVar(&needShareLink, "need-share-link", false, "Whether to retrieve the sharing link, defaults to false")
 	_ = cmd.MarkFlagRequired("id")
 	_ = cmd.MarkFlagRequired("schedule-at")
 	_ = cmd.MarkFlagRequired("title")
