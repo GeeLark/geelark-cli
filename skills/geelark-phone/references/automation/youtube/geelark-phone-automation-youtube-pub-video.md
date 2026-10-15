@@ -15,6 +15,7 @@ YouTube publish video.
 | `--name <text>` | Task name (max 128 chars) |
 | `--remark <text>` | Remark (max 200 chars) |
 | `--is-disclosure-mandatory` | Whether to force disclosure (default false) |
+| `--wait-time-after-publishing <n>` | Waiting time after publishing, in minutes, 0-100 (optional) |
 
 ## Example
 

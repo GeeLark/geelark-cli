@@ -1156,6 +1156,8 @@ func newYouTubePubVideoCmd(newClient clientFactory) *cobra.Command {
 	var id, name, remark, title, description, video string
 	var scheduleAt int64
 	var isDisclosureMandatory bool
+	var waitTimeAfterPublishing int
+	var waitTimeSet bool
 	cmd := &cobra.Command{
 		Use:     "youtube-pub-video",
 		Short:   "YouTube publish video",
@@ -1175,6 +1177,9 @@ func newYouTubePubVideoCmd(newClient clientFactory) *cobra.Command {
 			if isDisclosureMandatory {
 				body["isDisclosureMandatory"] = true
 			}
+			if waitTimeSet {
+				body["waitTimeAfterPublishing"] = waitTimeAfterPublishing
+			}
 			result, err := c.PostAndPrint("/open/v1/rpa/task/youtubePubVideo", body)
 			if err != nil {
 				return err
@@ -1191,11 +1196,20 @@ func newYouTubePubVideoCmd(newClient clientFactory) *cobra.Command {
 	cmd.Flags().StringVar(&description, "description", "", "Description (max 5000 chars, required)")
 	cmd.Flags().StringVar(&video, "video", "", "Video URL (required)")
 	cmd.Flags().BoolVar(&isDisclosureMandatory, "is-disclosure-mandatory", false, "Whether to force disclosure (default false)")
+	cmd.Flags().IntVar(&waitTimeAfterPublishing, "wait-time-after-publishing", 0, "Waiting time after publishing, in minutes, 0-100")
 	_ = cmd.MarkFlagRequired("id")
 	_ = cmd.MarkFlagRequired("schedule-at")
 	_ = cmd.MarkFlagRequired("title")
 	_ = cmd.MarkFlagRequired("description")
 	_ = cmd.MarkFlagRequired("video")
+
+	cmd.PreRunE = func(cmd *cobra.Command, args []string) error {
+		waitTimeSet = cmd.Flags().Changed("wait-time-after-publishing")
+		if waitTimeSet && (waitTimeAfterPublishing < 0 || waitTimeAfterPublishing > 100) {
+			return fmt.Errorf("--wait-time-after-publishing must be between 0 and 100")
+		}
+		return nil
+	}
 	return cmd
 }
 
