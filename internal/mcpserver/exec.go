@@ -85,8 +85,10 @@ func (s *Server) runHelp(ctx context.Context, path []string) Outcome {
 // execCLI forks the same geelark-cli binary. Capturing the child process
 // stdout/stderr keeps the MCP transport on the parent stdout untouched,
 // so none of the CLI's fmt.Println sites need to change.
+// GEELARK_FROM_MCP marks the child so its API requests carry an MCP UA.
 func execCLI(ctx context.Context, args []string) Outcome {
 	cmd := exec.CommandContext(ctx, SelfBin(), args...)
+	cmd.Env = append(os.Environ(), "GEELARK_FROM_MCP=1")
 	var stdout, stderr strings.Builder
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr

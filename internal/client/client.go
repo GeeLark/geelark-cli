@@ -17,6 +17,16 @@ import (
 	"github.com/google/uuid"
 )
 
+// uaValue returns the geelark-cli header value, appending "/mcp" when the
+// process was forked by the MCP server (GEELARK_FROM_MCP is set by execCLI).
+func uaValue() string {
+	v := build.Version
+	if os.Getenv("GEELARK_FROM_MCP") != "" {
+		v += "/mcp"
+	}
+	return v
+}
+
 // Client is the GeeLark API client.
 type Client struct {
 	cfg        *config.Config
@@ -79,7 +89,7 @@ func (c *Client) Post(path string, body interface{}) (*APIResponse, error) {
 	traceID := strings.ToUpper(strings.ReplaceAll(uuid.New().String(), "-", ""))
 	req.Header.Set("traceId", traceID)
 	req.Header.Set("Authorization", "Bearer "+c.cfg.Token)
-	req.Header.Set("geelark-cli", build.Version)
+	req.Header.Set("geelark-cli", uaValue())
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
@@ -130,7 +140,7 @@ func (c *Client) PostBrowser(path string, body interface{}) (*APIResponse, error
 	traceID := strings.ToUpper(strings.ReplaceAll(uuid.New().String(), "-", ""))
 	req.Header.Set("traceId", traceID)
 	req.Header.Set("Authorization", "Bearer "+c.cfg.Token)
-	req.Header.Set("geelark-cli", build.Version)
+	req.Header.Set("geelark-cli", uaValue())
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
