@@ -15,6 +15,7 @@ Batch create cloud phones. Basic plan supports 1 at a time; Pro plan supports ba
 
 | Parameter | Required | Description |
 |-----------|----------|-------------|
+| `mobileType` | No | Per-phone Android version (Android 9/10/11/12/13/14/15/16); falls back to the top-level `--mobile-type` if not specified |
 | `profileName` | Yes | Cloud phone name |
 | `proxyInformation` | No | Proxy string, e.g. socks5://user:pass@host:port; set `LocalNetwork` to use no proxy (requires client network extension enabled) |
 | `refreshUrl` | No | Proxy refresh URL |
@@ -54,6 +55,9 @@ geelark-cli phone create --region "cn" --mobile-type "Android 13" --data "[{\"pr
 
 # Create with GProxy dynamic proxy
 geelark-cli phone create --region "sgp" --mobile-type "Android 15" --data "[{\"profileName\":\"myPhone\",\"dynamicProxy\":\"GProxyResidential\",\"dynamicProxyLocation\":\"us\",\"protocol\":1,\"sessionType\":1,\"filterMode\":1}]"
+
+# Create with per-phone mobile type (overrides --mobile-type per item)
+geelark-cli phone create --region "sgp" --mobile-type "Android 15" --data "[{\"profileName\":\"phone1\",\"mobileType\":\"Android 16\"},{\"profileName\":\"phone2\"}]"
 ```
 
 ## Response Fields

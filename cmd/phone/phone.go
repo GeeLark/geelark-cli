@@ -160,9 +160,11 @@ func newListCmd(newClient clientFactory) *cobra.Command {
 func newStartCmd(newClient clientFactory) *cobra.Command {
 	var ids, lang string
 	var width, center, energySavingMode int
+	var energySavingAfterMinutes, cleanupSDcardAfterDays int
 	var materialTagIds string
 	var darkMode bool
 	var widthSet, centerSet, energySavingSet, langSet, darkModeSet bool
+	var energySavingAfterSet, cleanupSDcardSet bool
 
 	cmd := &cobra.Command{
 		Use:   "start",
@@ -196,6 +198,12 @@ Supports display width, centering, energy-saving mode, language, and material ta
 			if energySavingSet {
 				body["energySavingMode"] = energySavingMode
 			}
+			if energySavingAfterSet {
+				body["enableEnergySavingModeAfterMinutes"] = energySavingAfterMinutes
+			}
+			if cleanupSDcardSet {
+				body["cleanupSDcardAfterDays"] = cleanupSDcardAfterDays
+			}
 			if materialTagIds != "" {
 				body["materialTagIds"] = strings.Split(materialTagIds, ",")
 			}
@@ -215,7 +223,9 @@ Supports display width, centering, energy-saving mode, language, and material ta
 	cmd.Flags().StringVar(&ids, "ids", "", "Comma-separated cloud phone IDs, max 200 (required)")
 	cmd.Flags().IntVar(&width, "width", 336, "Cloud phone display width in px (200-600, default 336)")
 	cmd.Flags().IntVar(&center, "center", 1, "Whether display is centered: 0=no, 1=yes (default 1)")
-	cmd.Flags().IntVar(&energySavingMode, "energy-saving", 0, "Energy-saving mode: 0=disabled, 1=enabled (auto shutdown after 30min idle)")
+	cmd.Flags().IntVar(&energySavingMode, "energy-saving", 0, "Energy-saving mode: 0=disabled, 1=enabled (auto shutdown after 30min idle). Deprecated: prefer --energy-saving-after-minutes")
+	cmd.Flags().IntVar(&energySavingAfterMinutes, "energy-saving-after-minutes", 0, "Enable energy-saving mode after N minutes idle (auto shutdown): 30, 60, 90; 0=disabled")
+	cmd.Flags().IntVar(&cleanupSDcardAfterDays, "cleanup-sdcard-after-days", 0, "Auto-clean SD card data older than N days to speed up startup: 3, 7; 0=disabled; if omitted, team default applies")
 	cmd.Flags().StringVar(&lang, "lang", "", "Language, optional (supported: zh-CN, en-US, vi-VN, pt-BR, ru-RU, es-LA, uk-UA, ja-JP, zh-TW, id-ID, tr-TR, fr-FR); if omitted the server default applies")
 	cmd.Flags().StringVar(&materialTagIds, "material-tag-ids", "", "Comma-separated material tag IDs (max 10, requires OEM)")
 	cmd.Flags().BoolVar(&darkMode, "dark-mode", false, "Whether to enable dark mode: 0=disabled (default), 1=enabled (i.e. dark theme)")
@@ -226,6 +236,23 @@ Supports display width, centering, energy-saving mode, language, and material ta
 		centerSet = cmd.Flags().Changed("center")
 		energySavingSet = cmd.Flags().Changed("energy-saving")
 		langSet = cmd.Flags().Changed("lang")
+		darkModeSet = cmd.Flags().Changed("dark-mode")
+		energySavingAfterSet = cmd.Flags().Changed("energy-saving-after-minutes")
+		cleanupSDcardSet = cmd.Flags().Changed("cleanup-sdcard-after-days")
+		if energySavingAfterSet {
+			switch energySavingAfterMinutes {
+			case 0, 30, 60, 90:
+			default:
+				return fmt.Errorf("--energy-saving-after-minutes must be one of 0, 30, 60, 90")
+			}
+		}
+		if cleanupSDcardSet {
+			switch cleanupSDcardAfterDays {
+			case 0, 3, 7:
+			default:
+				return fmt.Errorf("--cleanup-sdcard-after-days must be one of 0, 3, 7")
+			}
+		}
 		return nil
 	}
 
