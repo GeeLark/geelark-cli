@@ -66,7 +66,7 @@ geelark-cli phone <command> [flags]
 | `analytics` | Analytics account management (accounts-list, add-accounts, simple-add-account, update-account, delete-account, data) |
 | `webhook` | Webhook management (get, set) |
 | `oem` | OEM/White Label customization |
-| `automation` | Automation task management (57 commands across platforms) |
+| `automation` | Automation task management (60 commands across platforms) |
 
 ## Which Command to Use
 

@@ -47,7 +47,7 @@ geelark-cli browser <command> [flags]
 
 | Command | Description |
 |---------|-------------|
-| `automation` | Automation task management (20 commands across platforms) |
+| `automation` | Automation task management (21 commands across platforms) |
 
 ## Typical Scenarios
 

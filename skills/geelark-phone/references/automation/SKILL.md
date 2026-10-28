@@ -30,6 +30,8 @@ Cloud phone automation task management. Create, query, cancel, and retry RPA tas
 | `tiktok-hide-asia` | Hide all TikTok videos — Asia |
 | `tiktok-delete` | Delete all TikTok videos |
 | `tiktok-delete-asia` | Delete all TikTok videos — Asia |
+| `tiktok-delete-comment` | Delete TikTok comments |
+| `tiktok-delete-comment-asia` | Delete TikTok comments — Asia |
 | `facebook-login` | Facebook auto login |
 | `facebook-publish` | Facebook publish video post |
 | `facebook-auto-comment` | Facebook auto comment |
@@ -43,12 +45,13 @@ Cloud phone automation task management. Create, query, cancel, and retry RPA tas
 | `instagram-pub-reels-images` | Instagram publish Reels image set |
 | `instagram-edit-profile` | Instagram profile editing |
 | `instagram-message` | Instagram private message |
+| `instagram-follow-account` | Instagram follow accounts |
+| `instagram-ai-comment` | Instagram AI random comment |
+| `instagram-like` | Instagram likes and comments |
 | `youtube-pub-video` | YouTube publish video |
 | `youtube-pub-short` | YouTube publish Short |
 | `youtube-maintenance` | YouTube account maintenance |
 | `youtube-edit-profile` | Edit YouTube profile |
-| `youtube-comment` | YouTube AI random comment |
-| `youtube-message` | YouTube private message |
 | `x-publish` | X (Twitter) publish tweet |
 | `reddit-warmup` | Reddit AI warmup |
 | `reddit-video` | Reddit publish video |
@@ -137,13 +140,13 @@ All automation task creation commands require:
 - [instagram-message](instagram/geelark-phone-automation-instagram-message.md)
 - [instagram-follow-account](instagram/geelark-phone-automation-instagram-follow-account.md)
 - [instagram-ai-comment](instagram/geelark-phone-automation-instagram-ai-comment.md)
+- [instagram-like](instagram/geelark-phone-automation-instagram-like.md)
 
 ### YouTube
 - [youtube-pub-video](youtube/geelark-phone-automation-youtube-pub-video.md)
 - [youtube-pub-short](youtube/geelark-phone-automation-youtube-pub-short.md)
 - [youtube-maintenance](youtube/geelark-phone-automation-youtube-maintenance.md)
-- [youtube-comment](youtube/geelark-phone-automation-youtube-comment.md)
-- [youtube-message](youtube/geelark-phone-automation-youtube-message.md)
+- [youtube-edit-profile](youtube/geelark-phone-automation-youtube-edit-profile.md)
 
 ### X (Twitter)
 - [x-publish](x/geelark-phone-automation-x-publish.md)

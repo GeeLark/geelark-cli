@@ -19,6 +19,7 @@ Browser automation task management. Create, query, cancel, and retry RPA tasks a
 | `youtube-watch` | YouTube watch videos |
 | `x-post` | X (Twitter) post a tweet |
 | `x-like` | X (Twitter) like and retweet tweets |
+| `x-ai-comment` | X (Twitter) AI random comments |
 | `instagram-search` | Instagram search hashtags and browse posts |
 | `instagram-like` | Browse and like Instagram feed |
 | `facebook-post` | Facebook post a status |
@@ -87,6 +88,7 @@ All automation task creation commands require:
 ### X (Twitter)
 - [x-post](x/geelark-browser-automation-x-post.md)
 - [x-like](x/geelark-browser-automation-x-like.md)
+- [x-ai-comment](x/geelark-browser-automation-x-ai-comment.md)
 
 ### Instagram
 - [instagram-search](instagram/geelark-browser-automation-instagram-search.md)

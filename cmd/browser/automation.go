@@ -30,6 +30,7 @@ Includes task management, custom tasks, and platform-specific automation
 	cmd.AddCommand(newYouTubeWatchCmd(newClient))
 	cmd.AddCommand(newXPostCmd(newClient))
 	cmd.AddCommand(newXLikeCmd(newClient))
+	cmd.AddCommand(newXAICommentCmd(newClient))
 	cmd.AddCommand(newInstagramSearchCmd(newClient))
 	cmd.AddCommand(newInstagramLikeCmd(newClient))
 	cmd.AddCommand(newFacebookPostCmd(newClient))
@@ -585,6 +586,76 @@ func newXLikeCmd(newClient clientFactory) *cobra.Command {
 	cmd.Flags().Int64Var(&scheduleAt, "schedule-at", 0, "Schedule time, second-level timestamp (required)")
 	_ = cmd.MarkFlagRequired("eid")
 	_ = cmd.MarkFlagRequired("schedule-at")
+	return cmd
+}
+
+func newXAICommentCmd(newClient clientFactory) *cobra.Command {
+	var eid, name, remark, comment, links, searchKeywords, imagePath string
+	var scheduleAt int64
+	var useAI, commentProbability int
+	var likeVideo bool
+
+	cmd := &cobra.Command{
+		Use:   "x-ai-comment",
+		Short: "X (Twitter) AI random comments",
+		Long:  "Create an X (Twitter) automation task to post AI random comments.",
+		Example: `  geelark-cli browser automation x-ai-comment --eid "557536075321468390" --schedule-at 1741846843 --use-ai 2 --comment "test"
+  geelark-cli browser automation x-ai-comment --eid "557536075321468390" --schedule-at 1741846843 --use-ai 2 --comment "test" --comment-probability 50 --like-video`,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			c, err := newClient()
+			if err != nil {
+				return err
+			}
+			body := map[string]interface{}{
+				"eid":        eid,
+				"scheduleAt": scheduleAt,
+				"useAI":      useAI,
+				"comment":    comment,
+			}
+			if name != "" {
+				body["name"] = name
+			}
+			if remark != "" {
+				body["remark"] = remark
+			}
+			if links != "" {
+				body["links"] = strings.Split(links, ",")
+			}
+			if commentProbability > 0 {
+				body["commentProbability"] = commentProbability
+			}
+			if searchKeywords != "" {
+				body["searchKeywords"] = strings.Split(searchKeywords, ",")
+			}
+			if likeVideo {
+				body["likeVideo"] = true
+			}
+			if imagePath != "" {
+				body["imagePath"] = imagePath
+			}
+			result, err := c.PostBrowserAndPrint("/api/v1/browser/task/xAiComment", body)
+			if err != nil {
+				return err
+			}
+			fmt.Println(result)
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&eid, "eid", "", "Environment ID (required)")
+	cmd.Flags().StringVar(&name, "name", "", "Task name (max 128 chars)")
+	cmd.Flags().StringVar(&remark, "remark", "", "Remark (max 200 chars)")
+	cmd.Flags().Int64Var(&scheduleAt, "schedule-at", 0, "Schedule time, second-level timestamp (required)")
+	cmd.Flags().IntVar(&useAI, "use-ai", 0, "Use AI: 1=AI (Pro only), 2=manual comment (required)")
+	cmd.Flags().StringVar(&comment, "comment", "", "Comment content, max 300 chars (required when use-ai=2)")
+	cmd.Flags().StringVar(&links, "links", "", "Comma-separated specified links, max 100, each max 100 chars")
+	cmd.Flags().IntVar(&commentProbability, "comment-probability", 0, "Comment probability, 0-100, default 30")
+	cmd.Flags().StringVar(&searchKeywords, "search-keywords", "", "Comma-separated search keywords, max 100, each max 100 chars")
+	cmd.Flags().BoolVar(&likeVideo, "like-video", false, "Whether to like, defaults to false")
+	cmd.Flags().StringVar(&imagePath, "image-path", "", "Comment image local file path, max 500 chars (effective when use-ai=2)")
+	_ = cmd.MarkFlagRequired("eid")
+	_ = cmd.MarkFlagRequired("schedule-at")
+	_ = cmd.MarkFlagRequired("use-ai")
 	return cmd
 }
 

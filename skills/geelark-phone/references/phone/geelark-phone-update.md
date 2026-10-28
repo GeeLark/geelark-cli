@@ -25,6 +25,8 @@ Static proxy (typeId 1=socks5, 2=http, 3=https, -1=no proxy):
 | `port` | Yes | Proxy server port |
 | `username` | Yes | Proxy server username |
 | `password` | Yes | Proxy server password |
+| `refreshUrl` | No | Proxy refresh URL |
+| `autoRefresh` | No | Auto refresh: 0=disabled (default when omitted), 1=refresh every hour, 2=refresh daily |
 
 Dynamic proxy (typeId 21=IPHTML, 22=kookeey, 23=Lumatuo(BrightData), 24=Proxyma, 25=SmartProxy, 26=RolaIP, 27=NodeMaven, 29=KookeeyMobile, 30=GProxy Residential). Set `useProxyCfg: true` to reuse the already configured proxy without host/port:
 

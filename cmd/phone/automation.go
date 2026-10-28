@@ -58,6 +58,7 @@ Includes task management, custom tasks, and platform-specific automation
 	cmd.AddCommand(newInstagramMessageCmd(newClient))
 	cmd.AddCommand(newInstagramFollowAccountCmd(newClient))
 	cmd.AddCommand(newInstagramAiCommentCmd(newClient))
+	cmd.AddCommand(newInstagramLikeCmd(newClient))
 	cmd.AddCommand(newYouTubePubVideoCmd(newClient))
 	cmd.AddCommand(newYouTubePubShortCmd(newClient))
 	cmd.AddCommand(newYouTubeMaintenanceCmd(newClient))
@@ -1149,6 +1150,50 @@ func newInstagramAiCommentCmd(newClient clientFactory) *cobra.Command {
 	_ = cmd.MarkFlagRequired("id")
 	_ = cmd.MarkFlagRequired("schedule-at")
 	_ = cmd.MarkFlagRequired("random-rate")
+	return cmd
+}
+
+func newInstagramLikeCmd(newClient clientFactory) *cobra.Command {
+	var id, name, remark string
+	var scheduleAt int64
+	var links, comments string
+	cmd := &cobra.Command{
+		Use:   "instagram-like",
+		Short: "Instagram likes and comments",
+		Example: `  geelark-cli phone automation instagram-like --id "557536075321468390" --schedule-at 1741846843 --links "https://www.instagram.com/p/xxx1/,https://www.instagram.com/p/xxx2/"
+  geelark-cli phone automation instagram-like --id "557536075321468390" --schedule-at 1741846843 --links "https://www.instagram.com/p/xxx1/" --comments "nice post,great"`,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			c, err := newClient()
+			if err != nil {
+				return err
+			}
+			body := map[string]interface{}{"id": id, "scheduleAt": scheduleAt, "links": strings.Split(links, ",")}
+			if name != "" {
+				body["name"] = name
+			}
+			if remark != "" {
+				body["remark"] = remark
+			}
+			if comments != "" {
+				body["comments"] = strings.Split(comments, ",")
+			}
+			result, err := c.PostAndPrint("/open/v1/rpa/task/instagramLike", body)
+			if err != nil {
+				return err
+			}
+			fmt.Println(result)
+			return nil
+		},
+	}
+	cmd.Flags().StringVar(&id, "id", "", "Cloud phone ID (required)")
+	cmd.Flags().StringVar(&name, "name", "", "Task name (max 128 chars)")
+	cmd.Flags().StringVar(&remark, "remark", "", "Remark (max 200 chars)")
+	cmd.Flags().Int64Var(&scheduleAt, "schedule-at", 0, "Schedule time, second-level timestamp (required)")
+	cmd.Flags().StringVar(&links, "links", "", "Comma-separated post links, max 100, each max 100 chars (required)")
+	cmd.Flags().StringVar(&comments, "comments", "", "Comma-separated comments, max 100, each max 100 chars")
+	_ = cmd.MarkFlagRequired("id")
+	_ = cmd.MarkFlagRequired("schedule-at")
+	_ = cmd.MarkFlagRequired("links")
 	return cmd
 }
 
