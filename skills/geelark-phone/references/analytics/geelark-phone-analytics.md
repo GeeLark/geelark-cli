@@ -16,6 +16,7 @@ geelark-cli phone analytics <command> [flags]
 | `update-account` | Update an analytics account |
 | `delete-account` | Delete an analytics account |
 | `data` | Get analytics account data |
+| `account-video-list` | Get video data list of an analytics account (TikTok only) |
 | `tags-list` | List analytics tags |
 | `tags-create` | Create an analytics tag |
 | `tags-update` | Update an analytics tag |
@@ -192,6 +193,48 @@ geelark-cli phone analytics data --page 1 --page-size 10 --channel 0
 | Code | Description |
 |------|-------------|
 | 43002 | Please upgrade to Pro plan to use this feature |
+
+## account-video-list
+
+Fetch the video data list of an analytics account by account ID. Only TikTok accounts are supported. Requires Pro plan.
+
+| Flag | Description |
+|------|-------------|
+| `--account-id <text>` | Account ID, the `id` field of [`accounts-list`](#accounts-list) / [`data`](#data) (required) |
+| `--sort-type <n>` | Sort type: 0=Latest, 1=Trending (default 0) |
+| `--sort-field <text>` | Data sort field: `createTime` / `diggCount` / `playCount` / `commentCount` / `collectCount` / `shareCount` (empty = no sorting) |
+| `--sort-order <text>` | Sort order: `asc` or `desc` (default `desc`) |
+
+```bash
+geelark-cli phone analytics account-video-list --account-id "581465531480044822"
+geelark-cli phone analytics account-video-list --account-id "581465531480044822" --sort-type 1 --sort-field "playCount" --sort-order "desc"
+```
+
+### Response Fields
+
+> Below is the `data` inner structure. The full response is wrapped in the standard envelope (`traceId` / `code` / `msg` / `data`), see [geelark-shared](../../../geelark-shared/SKILL.md#api-response-format).
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `items[]` | array[object] | Video data list; empty array when the account is invalid |
+| `items[].awemeId` | string | Video ID |
+| `items[].desc` | string | Video title |
+| `items[].cover` | string | Cover URL |
+| `items[].createTime` | integer | Publish time (timestamp, seconds) |
+| `items[].playCount` | integer | Play count |
+| `items[].diggCount` | integer | Like count |
+| `items[].commentCount` | integer | Comment count |
+| `items[].collectCount` | integer | Save count |
+| `items[].shareCount` | integer | Share count |
+
+### Error Codes
+
+| Code | Description |
+|------|-------------|
+| 40004 | Parameter validation failed (including accounts not on the TikTok channel) |
+| 40005 | Account not found |
+| 40007 | Too many requests in a short time |
+| 43002 | Please upgrade to the Pro package before using it |
 
 ## tags-list
 

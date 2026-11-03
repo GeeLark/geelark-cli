@@ -63,7 +63,7 @@ geelark-cli phone <command> [flags]
 | `file` | File management (upload-temp, upload-to-phone, upload-status, keybox-upload, keybox-result) |
 | `library` | Library/material management (material-create, material-search, material-delete, tag-create, tag-search, tag-delete, tag-set) |
 | `app` | Application management (shop-list, install, uninstall, start, stop, list, installable-list, upload, upload-status, batch, team-app) |
-| `analytics` | Analytics account management (accounts-list, add-accounts, simple-add-account, update-account, delete-account, data) |
+| `analytics` | Analytics account management (accounts-list, add-accounts, simple-add-account, update-account, delete-account, data, account-video-list, tags management) |
 | `webhook` | Webhook management (get, set) |
 | `oem` | OEM/White Label customization |
 | `automation` | Automation task management (60 commands across platforms) |

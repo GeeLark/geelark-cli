@@ -21,6 +21,7 @@ func newAnalyticsCmd(newClient clientFactory) *cobra.Command {
 	cmd.AddCommand(newAnalyticsUpdateAccountCmd(newClient))
 	cmd.AddCommand(newAnalyticsDeleteAccountCmd(newClient))
 	cmd.AddCommand(newAnalyticsDataCmd(newClient))
+	cmd.AddCommand(newAnalyticsAccountVideoListCmd(newClient))
 	cmd.AddCommand(newAnalyticsTagsListCmd(newClient))
 	cmd.AddCommand(newAnalyticsTagsCreateCmd(newClient))
 	cmd.AddCommand(newAnalyticsTagsUpdateCmd(newClient))
@@ -326,6 +327,52 @@ Channel: 0=TikTok, 1=YouTube, 2=Instagram, 4=Reddit. Requires Pro plan.`,
 		dataDateSet = cmd.Flags().Changed("data-date")
 		return nil
 	}
+
+	return cmd
+}
+
+func newAnalyticsAccountVideoListCmd(newClient clientFactory) *cobra.Command {
+	var accountId, sortField, sortOrder string
+	var sortType int
+
+	cmd := &cobra.Command{
+		Use:   "account-video-list",
+		Short: "Get video data list of an analytics account",
+		Long: `Fetch the video data list of an analytics account by account ID. Only TikTok accounts are supported.
+Account ID is the id field of 'analytics accounts-list' / 'analytics data'.`,
+		Example: `  geelark-cli phone analytics account-video-list --account-id "581465531480044822"
+  geelark-cli phone analytics account-video-list --account-id "581465531480044822" --sort-type 1 --sort-field "playCount" --sort-order "desc"`,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			c, err := newClient()
+			if err != nil {
+				return err
+			}
+			body := map[string]interface{}{
+				"accountId": accountId,
+			}
+			if cmd.Flags().Changed("sort-type") {
+				body["sortType"] = sortType
+			}
+			if sortField != "" {
+				body["sortField"] = sortField
+			}
+			if sortOrder != "" {
+				body["sortOrder"] = sortOrder
+			}
+			result, err := c.PostAndPrint("/open/v1/analytics/accounts/videoList", body)
+			if err != nil {
+				return err
+			}
+			fmt.Println(result)
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&accountId, "account-id", "", "Account ID, the id field of accounts-list/data (required)")
+	cmd.Flags().IntVar(&sortType, "sort-type", 0, "Sort type: 0=Latest, 1=Trending")
+	cmd.Flags().StringVar(&sortField, "sort-field", "", "Data sort field: createTime/diggCount/playCount/commentCount/collectCount/shareCount")
+	cmd.Flags().StringVar(&sortOrder, "sort-order", "", "Sort order: asc or desc")
+	_ = cmd.MarkFlagRequired("account-id")
 
 	return cmd
 }
