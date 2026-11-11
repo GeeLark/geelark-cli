@@ -489,9 +489,9 @@ func newTransferCmd(newClient clientFactory) *cobra.Command {
 		Use:   "transfer",
 		Short: "Transfer browsers to another account",
 		Long: `Transfer browser environments to a target account. Max 200 per request.
-transfer-option allowed values (comma-separated): name, proxy, tag, remark, files`,
+transfer-option allowed values (comma-separated): name, proxy, tag, remark, files, passkey`,
 		Example: `  geelark-cli browser transfer --env-ids "id1,id2" --username "user@geelark.com"
-  geelark-cli browser transfer --env-ids "id1" --username "user@geelark.com" --transfer-option "name,proxy,tag,remark"`,
+  geelark-cli browser transfer --env-ids "id1" --username "user@geelark.com" --transfer-option "name,proxy,tag,remark,passkey"`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			c, err := newClient()
 			if err != nil {
@@ -515,7 +515,7 @@ transfer-option allowed values (comma-separated): name, proxy, tag, remark, file
 
 	cmd.Flags().StringVar(&envIDs, "env-ids", "", "Comma-separated browser IDs, max 200 (required)")
 	cmd.Flags().StringVar(&username, "username", "", "Target user account email (required)")
-	cmd.Flags().StringVar(&transferOption, "transfer-option", "", "Comma-separated options: name, proxy, tag, remark, files")
+	cmd.Flags().StringVar(&transferOption, "transfer-option", "", "Comma-separated options: name, proxy, tag, remark, files, passkey (saved passwords)")
 	_ = cmd.MarkFlagRequired("env-ids")
 	_ = cmd.MarkFlagRequired("username")
 	return cmd

@@ -16,6 +16,7 @@ Instagram publish Reels video.
 | `--original-voice <n>` | Original volume, 0-100 |
 | `--ai-tag` | AI tag (default false) |
 | `--need-share-link` | Whether to retrieve sharing link (default false) |
+| `--trial` | Trial reel: shown first to non-followers in Feed and Reels, and not shown on your profile afterwards (default false) |
 | `--name <text>` | Task name (max 128 chars) |
 | `--remark <text>` | Remark (max 200 chars) |
 

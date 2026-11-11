@@ -39,6 +39,8 @@ Includes task management, custom tasks, and platform-specific automation
 	cmd.AddCommand(newTikTokMessageAsiaCmd(newClient))
 	cmd.AddCommand(newTikTokHideCmd(newClient))
 	cmd.AddCommand(newTikTokHideAsiaCmd(newClient))
+	cmd.AddCommand(newTikTokUnhideCmd(newClient))
+	cmd.AddCommand(newTikTokUnhideAsiaCmd(newClient))
 	cmd.AddCommand(newTikTokDeleteCmd(newClient))
 	cmd.AddCommand(newTikTokDeleteAsiaCmd(newClient))
 	cmd.AddCommand(newTikTokDeleteCommentCmd(newClient))
@@ -852,11 +854,11 @@ func newInstagramPubReelsCmd(newClient clientFactory) *cobra.Command {
 	var id, name, remark, description, video, sameStyleUrl string
 	var scheduleAt int64
 	var sameStyleVoice, originalVoice int
-	var aiTag, needShareLink bool
+	var aiTag, needShareLink, trial bool
 	cmd := &cobra.Command{
 		Use:     "instagram-pub-reels",
 		Short:   "Instagram publish Reels video",
-		Example: `  geelark-cli phone automation instagram-pub-reels --id "557536075321468390" --schedule-at 1741846843 --description "desc" --video "https://material.geelark.com/a.mp4"`,
+		Example: `  geelark-cli phone automation instagram-pub-reels --id "557536075321468390" --schedule-at 1741846843 --description "desc" --video "https://material.geelark.com/a.mp4" --trial`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			c, err := newClient()
 			if err != nil {
@@ -884,6 +886,9 @@ func newInstagramPubReelsCmd(newClient clientFactory) *cobra.Command {
 			if needShareLink {
 				body["needShareLink"] = true
 			}
+			if trial {
+				body["trial"] = true
+			}
 			result, err := c.PostAndPrint("/open/v1/rpa/task/instagramPubReels", body)
 			if err != nil {
 				return err
@@ -903,6 +908,7 @@ func newInstagramPubReelsCmd(newClient clientFactory) *cobra.Command {
 	cmd.Flags().IntVar(&originalVoice, "original-voice", 0, "Original volume, 0-100")
 	cmd.Flags().BoolVar(&aiTag, "ai-tag", false, "AI tag, defaults to false")
 	cmd.Flags().BoolVar(&needShareLink, "need-share-link", false, "Whether to retrieve sharing link")
+	cmd.Flags().BoolVar(&trial, "trial", false, "Trial reel: shown first to non-followers and not shown on your profile afterwards (default false)")
 	_ = cmd.MarkFlagRequired("id")
 	_ = cmd.MarkFlagRequired("schedule-at")
 	_ = cmd.MarkFlagRequired("description")
@@ -1362,12 +1368,13 @@ func newYouTubeMaintenanceCmd(newClient clientFactory) *cobra.Command {
 }
 
 func newYouTubeEditProfileCmd(newClient clientFactory) *cobra.Command {
-	var id, name, remark, profileName, handle, description string
+	var id, name, remark, profileName, profilePicture, handle, description string
 	var scheduleAt int64
 	cmd := &cobra.Command{
-		Use:     "youtube-edit-profile",
-		Short:   "Edit YouTube profile",
-		Example: `  geelark-cli phone automation youtube-edit-profile --id "557536075321468390" --schedule-at 1741846843 --profile-name "myName"`,
+		Use:   "youtube-edit-profile",
+		Short: "Edit YouTube profile",
+		Example: `  geelark-cli phone automation youtube-edit-profile --id "557536075321468390" --schedule-at 1741846843 --profile-name "myName"
+  geelark-cli phone automation youtube-edit-profile --id "557536075321468390" --schedule-at 1741846843 --profile-picture "https://material.geelark.com/avatar.jpg"`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			c, err := newClient()
 			if err != nil {
@@ -1382,6 +1389,9 @@ func newYouTubeEditProfileCmd(newClient clientFactory) *cobra.Command {
 			}
 			if profileName != "" {
 				body["profileName"] = profileName
+			}
+			if profilePicture != "" {
+				body["profilePicture"] = profilePicture
 			}
 			if handle != "" {
 				body["handle"] = handle
@@ -1402,6 +1412,7 @@ func newYouTubeEditProfileCmd(newClient clientFactory) *cobra.Command {
 	cmd.Flags().StringVar(&remark, "remark", "", "Remark (max 200 chars)")
 	cmd.Flags().Int64Var(&scheduleAt, "schedule-at", 0, "Schedule time, second-level timestamp (required)")
 	cmd.Flags().StringVar(&profileName, "profile-name", "", "Profile name (max 50 chars)")
+	cmd.Flags().StringVar(&profilePicture, "profile-picture", "", "Profile picture URL (max 255 chars)")
 	cmd.Flags().StringVar(&handle, "handle", "", "Handle/identifier name (max 100 chars)")
 	cmd.Flags().StringVar(&description, "description", "", "Description (max 1000 chars)")
 	_ = cmd.MarkFlagRequired("id")
@@ -2597,6 +2608,100 @@ func newTikTokHideAsiaCmd(newClient clientFactory) *cobra.Command {
 	cmd.Flags().StringVar(&remark, "remark", "", "Remark (max 200 chars)")
 	cmd.Flags().Int64Var(&scheduleAt, "schedule-at", 0, "Schedule time, second-level timestamp (required)")
 	cmd.Flags().IntVar(&number, "number", 0, "Number of videos to hide, range 0-999; 0 or unset = hide all")
+	_ = cmd.MarkFlagRequired("id")
+	_ = cmd.MarkFlagRequired("schedule-at")
+	return cmd
+}
+
+func newTikTokUnhideCmd(newClient clientFactory) *cobra.Command {
+	var id, name, remark string
+	var scheduleAt int64
+	var specifyCount bool
+	var number int
+	cmd := &cobra.Command{
+		Use:   "tiktok-unhide",
+		Short: "Restore hidden TikTok videos",
+		Example: `  geelark-cli phone automation tiktok-unhide --id "557536075321468390" --schedule-at 1741846843
+  geelark-cli phone automation tiktok-unhide --id "557536075321468390" --schedule-at 1741846843 --specify-count --number 10`,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			c, err := newClient()
+			if err != nil {
+				return err
+			}
+			body := map[string]interface{}{"id": id, "scheduleAt": scheduleAt}
+			if name != "" {
+				body["name"] = name
+			}
+			if remark != "" {
+				body["remark"] = remark
+			}
+			if specifyCount {
+				body["specifyCount"] = true
+				if number > 0 {
+					body["number"] = number
+				}
+			}
+			result, err := c.PostAndPrint("/open/v1/rpa/task/tiktokUnhide", body)
+			if err != nil {
+				return err
+			}
+			fmt.Println(result)
+			return nil
+		},
+	}
+	cmd.Flags().StringVar(&id, "id", "", "Cloud phone ID (required)")
+	cmd.Flags().StringVar(&name, "name", "", "Task name (max 128 chars)")
+	cmd.Flags().StringVar(&remark, "remark", "", "Remark (max 200 chars)")
+	cmd.Flags().Int64Var(&scheduleAt, "schedule-at", 0, "Schedule time, second-level timestamp (required)")
+	cmd.Flags().BoolVar(&specifyCount, "specify-count", false, "Whether to restore a specific number of videos; unset = restore all")
+	cmd.Flags().IntVar(&number, "number", 0, "Number of videos to restore, range 1-999; required when --specify-count is set")
+	_ = cmd.MarkFlagRequired("id")
+	_ = cmd.MarkFlagRequired("schedule-at")
+	return cmd
+}
+
+func newTikTokUnhideAsiaCmd(newClient clientFactory) *cobra.Command {
+	var id, name, remark string
+	var scheduleAt int64
+	var specifyCount bool
+	var number int
+	cmd := &cobra.Command{
+		Use:   "tiktok-unhide-asia",
+		Short: "Restore hidden TikTok videos (Asia)",
+		Example: `  geelark-cli phone automation tiktok-unhide-asia --id "557536075321468390" --schedule-at 1741846843
+  geelark-cli phone automation tiktok-unhide-asia --id "557536075321468390" --schedule-at 1741846843 --specify-count --number 10`,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			c, err := newClient()
+			if err != nil {
+				return err
+			}
+			body := map[string]interface{}{"id": id, "scheduleAt": scheduleAt}
+			if name != "" {
+				body["name"] = name
+			}
+			if remark != "" {
+				body["remark"] = remark
+			}
+			if specifyCount {
+				body["specifyCount"] = true
+				if number > 0 {
+					body["number"] = number
+				}
+			}
+			result, err := c.PostAndPrint("/open/v1/rpa/task/tiktokUnhideAsia", body)
+			if err != nil {
+				return err
+			}
+			fmt.Println(result)
+			return nil
+		},
+	}
+	cmd.Flags().StringVar(&id, "id", "", "Cloud phone ID (required)")
+	cmd.Flags().StringVar(&name, "name", "", "Task name (max 128 chars)")
+	cmd.Flags().StringVar(&remark, "remark", "", "Remark (max 200 chars)")
+	cmd.Flags().Int64Var(&scheduleAt, "schedule-at", 0, "Schedule time, second-level timestamp (required)")
+	cmd.Flags().BoolVar(&specifyCount, "specify-count", false, "Whether to restore a specific number of videos; unset = restore all")
+	cmd.Flags().IntVar(&number, "number", 0, "Number of videos to restore, range 1-999; required when --specify-count is set")
 	_ = cmd.MarkFlagRequired("id")
 	_ = cmd.MarkFlagRequired("schedule-at")
 	return cmd

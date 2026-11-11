@@ -10,6 +10,7 @@ Edit YouTube profile.
 | `--id <text>` | Cloud phone ID (required) |
 | `--schedule-at <n>` | Schedule time, second-level timestamp (required) |
 | `--profile-name <text>` | Profile name (max 50 chars) |
+| `--profile-picture <text>` | Profile picture URL (max 255 chars) |
 | `--handle <text>` | Handle / identifier name (max 100 chars) |
 | `--description <text>` | Description (max 1000 chars) |
 | `--name <text>` | Task name (max 128 chars) |

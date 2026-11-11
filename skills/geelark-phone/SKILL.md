@@ -65,8 +65,9 @@ geelark-cli phone <command> [flags]
 | `app` | Application management (shop-list, install, uninstall, start, stop, list, installable-list, upload, upload-status, batch, team-app) |
 | `analytics` | Analytics account management (accounts-list, add-accounts, simple-add-account, update-account, delete-account, data, account-video-list, tags management) |
 | `webhook` | Webhook management (get, set) |
+| `patch` | Xposed patch management (install, uninstall, status) |
 | `oem` | OEM/White Label customization |
-| `automation` | Automation task management (60 commands across platforms) |
+| `automation` | Automation task management (62 commands across platforms) |
 
 ## Which Command to Use
 
@@ -92,6 +93,8 @@ geelark-cli phone <command> [flags]
 | Manage apps | [`app`](references/app/geelark-phone-app.md) |
 | Analytics accounts | [`analytics`](references/analytics/geelark-phone-analytics.md) |
 | Set webhook | [`webhook set`](references/webhook/geelark-phone-webhook-set.md) |
+| Install/uninstall Xposed patch | [`patch install`](references/patch/geelark-phone-patch-install.md) / [`patch uninstall`](references/patch/geelark-phone-patch-uninstall.md) |
+| Query Xposed patch install status | [`patch status`](references/patch/geelark-phone-patch-status.md) |
 | OEM customization | [`oem customization`](references/oem/geelark-phone-oem-customization.md) |
 | Automation tasks | [`automation`](references/automation/SKILL.md) |
 

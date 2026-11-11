@@ -60,6 +60,7 @@ func NewCmd(newClient clientFactory) *cobra.Command {
 	cmd.AddCommand(newShellCmd(newClient))
 	cmd.AddCommand(newADBCmd(newClient))
 	cmd.AddCommand(newWebhookCmd(newClient))
+	cmd.AddCommand(newPatchCmd(newClient))
 	cmd.AddCommand(newOEMCmd(newClient))
 	cmd.AddCommand(newAnalyticsCmd(newClient))
 	cmd.AddCommand(newAppCmd(newClient))
@@ -1379,25 +1380,38 @@ func newNetConfigGetCmd(newClient clientFactory) *cobra.Command {
 }
 
 func newNetConfigSetCmd(newClient clientFactory) *cobra.Command {
-	var blackList string
+	var blackList, proxyDirect string
 
 	cmd := &cobra.Command{
-		Use:   "net-config-set",
-		Short: "Set cloud phone network config",
-		Long: `Modify cloud phone network settings including access blacklist.
-Max 3 blacklisted domains. Supports Android 9/10/11/12/13/15.`,
+		Use:     "net-config-set",
+		Short:   "Set cloud phone network config",
+		Long: `Modify cloud phone network settings including access blacklist and proxy direct whitelist.
+Blacklist: max 3 domains, supports Android 9/10/11/12/13/15.
+Proxy direct whitelist: max 3 domains bypassing the proxy, supports Android 12/13/14/15/16.
+Each list is only updated when its flag is explicitly set; pass an empty string to clear it.`,
 		Example: `  geelark-cli phone net-config-set --blacklist "a.com,b.com"
-  geelark-cli phone net-config-set --blacklist ""`,
+  geelark-cli phone net-config-set --blacklist ""
+  geelark-cli phone net-config-set --proxy-direct "example.com"
+  geelark-cli phone net-config-set --blacklist "a.com" --proxy-direct "b.com"`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			c, err := newClient()
 			if err != nil {
 				return err
 			}
 			body := map[string]interface{}{}
-			if blackList != "" {
-				body["blackList"] = strings.Split(blackList, ",")
-			} else {
-				body["blackList"] = []string{}
+			if cmd.Flags().Changed("blacklist") {
+				if blackList != "" {
+					body["blackList"] = strings.Split(blackList, ",")
+				} else {
+					body["blackList"] = []string{}
+				}
+			}
+			if cmd.Flags().Changed("proxy-direct") {
+				if proxyDirect != "" {
+					body["proxyDirect"] = strings.Split(proxyDirect, ",")
+				} else {
+					body["proxyDirect"] = []string{}
+				}
 			}
 			result, err := c.PostAndPrint("/open/v1/phone/netConfig/set", body)
 			if err != nil {
@@ -1408,7 +1422,8 @@ Max 3 blacklisted domains. Supports Android 9/10/11/12/13/15.`,
 		},
 	}
 
-	cmd.Flags().StringVar(&blackList, "blacklist", "", "Comma-separated blacklisted domains (max 3, empty to clear)")
+	cmd.Flags().StringVar(&blackList, "blacklist", "", "Comma-separated blacklisted domains (max 3, empty to clear; omit to leave unchanged)")
+	cmd.Flags().StringVar(&proxyDirect, "proxy-direct", "", "Comma-separated proxy direct whitelist domains (max 3, subdomains included, empty to clear; omit to leave unchanged)")
 	return cmd
 }
 

@@ -28,6 +28,8 @@ Cloud phone automation task management. Create, query, cancel, and retry RPA tas
 | `tiktok-message-asia` | TikTok private message — Asia |
 | `tiktok-hide` | Hide all TikTok videos |
 | `tiktok-hide-asia` | Hide all TikTok videos — Asia |
+| `tiktok-unhide` | Restore hidden TikTok videos |
+| `tiktok-unhide-asia` | Restore hidden TikTok videos — Asia |
 | `tiktok-delete` | Delete all TikTok videos |
 | `tiktok-delete-asia` | Delete all TikTok videos — Asia |
 | `tiktok-delete-comment` | Delete TikTok comments |
@@ -119,6 +121,7 @@ All automation task creation commands require:
 - [tiktok-edit-profile](tiktok/geelark-phone-automation-tiktok-edit-profile.md)
 - [tiktok-message](tiktok/geelark-phone-automation-tiktok-message.md) / [tiktok-message-asia](tiktok/geelark-phone-automation-tiktok-message-asia.md)
 - [tiktok-hide](tiktok/geelark-phone-automation-tiktok-hide.md) / [tiktok-hide-asia](tiktok/geelark-phone-automation-tiktok-hide-asia.md)
+- [tiktok-unhide](tiktok/geelark-phone-automation-tiktok-unhide.md) / [tiktok-unhide-asia](tiktok/geelark-phone-automation-tiktok-unhide-asia.md)
 - [tiktok-delete](tiktok/geelark-phone-automation-tiktok-delete.md) / [tiktok-delete-asia](tiktok/geelark-phone-automation-tiktok-delete-asia.md)
 - [tiktok-delete-comment](tiktok/geelark-phone-automation-tiktok-delete-comment.md) / [tiktok-delete-comment-asia](tiktok/geelark-phone-automation-tiktok-delete-comment-asia.md)
 

@@ -1,6 +1,6 @@
 # phone net-config-get
 
-Get cloud phone network settings including access blacklist.
+Get cloud phone network settings including access blacklist and proxy direct whitelist.
 
 ## Examples
 
@@ -15,3 +15,4 @@ geelark-cli phone net-config-get
 | Field | Type | Description |
 |-------|------|-------------|
 | `blackList` | array[string] | Blacklisted domains |
+| `proxyDirect` | array[string] | Proxy direct whitelist domains |
