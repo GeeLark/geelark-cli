@@ -27,6 +27,8 @@ geelark-cli billing <command> [flags]
 | `plan-upgrade` | Upgrade subscription plan |
 | `plan-renew` | Renew subscription plan |
 | `buy-time-addon` | Buy time add-on minutes |
+| `gproxy-info` | Get GProxy traffic info |
+| `gproxy-buy` | Buy GProxy traffic |
 
 ## Which Command to Use
 
@@ -39,6 +41,8 @@ geelark-cli billing <command> [flags]
 | Upgrade plan | [`plan-upgrade`](references/geelark-billing-plan-upgrade.md) |
 | Renew plan | [`plan-renew`](references/geelark-billing-plan-renew.md) |
 | Buy extra minutes | [`buy-time-addon`](references/geelark-billing-buy-time-addon.md) |
+| Check GProxy traffic | [`gproxy-info`](references/geelark-billing-gproxy-info.md) |
+| Buy GProxy traffic | [`gproxy-buy`](references/geelark-billing-gproxy-buy.md) |
 
 ## Typical Scenarios
 

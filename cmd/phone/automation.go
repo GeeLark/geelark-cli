@@ -385,13 +385,14 @@ func newTaskFlowExportCmd(newClient clientFactory) *cobra.Command {
 }
 
 func newTikTokLoginCmd(newClient clientFactory) *cobra.Command {
-	var id, name, remark, account, password, twoFAKey string
+	var id, name, remark, account, password, twoFAKey, linkCode string
 	var scheduleAt int64
 	cmd := &cobra.Command{
 		Use:   "tiktok-login",
 		Short: "TikTok account login",
 		Example: `  geelark-cli phone automation tiktok-login --id "557536075321468390" --schedule-at 1741846843 --account "test@gmail.com" --password "123456"
-  geelark-cli phone automation tiktok-login --id "557536075321468390" --schedule-at 1741846843 --account "test@gmail.com" --password "123456" --two-fa-key "2FAKEY"`,
+  geelark-cli phone automation tiktok-login --id "557536075321468390" --schedule-at 1741846843 --account "test@gmail.com" --password "123456" --two-fa-key "2FAKEY"
+  geelark-cli phone automation tiktok-login --id "557536075321468390" --schedule-at 1741846843 --account "test@gmail.com" --password "123456" --link-code "https://verification-code-link"`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			c, err := newClient()
 			if err != nil {
@@ -406,6 +407,9 @@ func newTikTokLoginCmd(newClient clientFactory) *cobra.Command {
 			}
 			if twoFAKey != "" {
 				body["twoFAKey"] = twoFAKey
+			}
+			if linkCode != "" {
+				body["linkCode"] = linkCode
 			}
 			result, err := c.PostAndPrint("/open/v1/rpa/task/tiktokLogin", body)
 			if err != nil {
@@ -422,6 +426,7 @@ func newTikTokLoginCmd(newClient clientFactory) *cobra.Command {
 	cmd.Flags().StringVar(&account, "account", "", "Account (max 64 chars, required)")
 	cmd.Flags().StringVar(&password, "password", "", "Password (max 64 chars, required)")
 	cmd.Flags().StringVar(&twoFAKey, "two-fa-key", "", "2FA Key")
+	cmd.Flags().StringVar(&linkCode, "link-code", "", "Verification code link (max 999 chars)")
 	_ = cmd.MarkFlagRequired("id")
 	_ = cmd.MarkFlagRequired("schedule-at")
 	_ = cmd.MarkFlagRequired("account")

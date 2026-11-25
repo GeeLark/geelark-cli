@@ -27,6 +27,7 @@ Includes task management, custom tasks, and platform-specific automation
 	cmd.AddCommand(newTikTokSearchCmd(newClient))
 	cmd.AddCommand(newTikTokCommentCmd(newClient))
 	cmd.AddCommand(newTikTokLikeCmd(newClient))
+	cmd.AddCommand(newTikTokPubVideoCmd(newClient))
 	cmd.AddCommand(newYouTubeWatchCmd(newClient))
 	cmd.AddCommand(newXPostCmd(newClient))
 	cmd.AddCommand(newXLikeCmd(newClient))
@@ -444,6 +445,69 @@ func newTikTokLikeCmd(newClient clientFactory) *cobra.Command {
 	_ = cmd.MarkFlagRequired("eid")
 	_ = cmd.MarkFlagRequired("schedule-at")
 	_ = cmd.MarkFlagRequired("video-link")
+	return cmd
+}
+
+func newTikTokPubVideoCmd(newClient clientFactory) *cobra.Command {
+	var eid, name, remark, videoPath, caption, coverPath, location string
+	var scheduleAt int64
+	var aiLabel bool
+
+	cmd := &cobra.Command{
+		Use:   "tiktok-pub-video",
+		Short: "TikTok publish video",
+		Long:  "Create a TikTok automation task to publish a video with optional caption, cover, location and AI label.",
+		Example: `  geelark-cli browser automation tiktok-pub-video --eid "557536075321468390" --schedule-at 1741846843 --video-path "C:\video\demo.mp4"
+  geelark-cli browser automation tiktok-pub-video --eid "557536075321468390" --schedule-at 1741846843 --video-path "C:\video\demo.mp4" --caption "hello tiktok #funny" --ai-label`,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			c, err := newClient()
+			if err != nil {
+				return err
+			}
+			body := map[string]interface{}{
+				"eid":       eid,
+				"scheduleAt": scheduleAt,
+				"videoPath": videoPath,
+			}
+			if name != "" {
+				body["name"] = name
+			}
+			if remark != "" {
+				body["remark"] = remark
+			}
+			if caption != "" {
+				body["caption"] = caption
+			}
+			if coverPath != "" {
+				body["coverPath"] = coverPath
+			}
+			if location != "" {
+				body["location"] = location
+			}
+			if aiLabel {
+				body["aiLabel"] = true
+			}
+			result, err := c.PostBrowserAndPrint("/api/v1/browser/task/tiktokPublish", body)
+			if err != nil {
+				return err
+			}
+			fmt.Println(result)
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&eid, "eid", "", "Environment ID (required)")
+	cmd.Flags().StringVar(&name, "name", "", "Task name (max 128 chars)")
+	cmd.Flags().StringVar(&remark, "remark", "", "Remark (max 200 chars)")
+	cmd.Flags().Int64Var(&scheduleAt, "schedule-at", 0, "Schedule time, second-level timestamp (required)")
+	cmd.Flags().StringVar(&videoPath, "video-path", "", "Local video file path on your computer (max 999 chars, required)")
+	cmd.Flags().StringVar(&caption, "caption", "", "Video caption (max 4000 chars)")
+	cmd.Flags().StringVar(&coverPath, "cover-path", "", "Local cover image file path on your computer (max 999 chars)")
+	cmd.Flags().StringVar(&location, "location", "", "Location (max 999 chars)")
+	cmd.Flags().BoolVar(&aiLabel, "ai-label", false, "Enable AI label")
+	_ = cmd.MarkFlagRequired("eid")
+	_ = cmd.MarkFlagRequired("schedule-at")
+	_ = cmd.MarkFlagRequired("video-path")
 	return cmd
 }
 

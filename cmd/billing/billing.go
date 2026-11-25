@@ -24,6 +24,8 @@ func NewCmd(newClient clientFactory) *cobra.Command {
 	cmd.AddCommand(newPlanUpgradeCmd(newClient))
 	cmd.AddCommand(newPlanRenewCmd(newClient))
 	cmd.AddCommand(newBuyTimeAddOnCmd(newClient))
+	cmd.AddCommand(newGProxyInfoCmd(newClient))
+	cmd.AddCommand(newGProxyBuyCmd(newClient))
 
 	return cmd
 }
@@ -274,6 +276,74 @@ Available minutes: 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000
 	cmd.Flags().IntVar(&minutes, "minutes", 0, "Minutes to buy: 2000/5000/10000/20000/50000/100000/200000/500000/1000000/2000000/5000000/10000000 (required)")
 	cmd.Flags().StringVar(&promoCode, "promo-code", "", "Promo code (optional)")
 	_ = cmd.MarkFlagRequired("minutes")
+
+	return cmd
+}
+
+func newGProxyInfoCmd(newClient clientFactory) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "gproxy-info",
+		Short: "Get GProxy traffic info",
+		Long: `Query the team's GProxy residential proxy traffic information.
+Returns residential proxy status, used traffic and available traffic (in bytes).
+Used traffic is fetched in real time from the proxy provider; results within the last 3 minutes may be served from cache.`,
+		Example: `  geelark-cli billing gproxy-info`,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			c, err := newClient()
+			if err != nil {
+				return err
+			}
+
+			body := map[string]interface{}{}
+
+			result, err := c.PostAndPrint("/open/v1/pay/gproxy/info", body)
+			if err != nil {
+				return err
+			}
+			fmt.Println(result)
+			return nil
+		},
+	}
+
+	return cmd
+}
+
+func newGProxyBuyCmd(newClient clientFactory) *cobra.Command {
+	var traffic int
+	var promoCode string
+
+	cmd := &cobra.Command{
+		Use:   "gproxy-buy",
+		Short: "Buy GProxy traffic",
+		Long: `Buy GProxy traffic, charged from the team wallet balance. Ensure sufficient balance.
+Traffic must be a valid tier: 5/10/20/50/100/150/200/300/400/500/600/700/800/900/1000/2000/3000/4000/5000 GB.`,
+		Example: `  geelark-cli billing gproxy-buy --traffic 10
+  geelark-cli billing gproxy-buy --traffic 10 --promo-code "GeeLark666"`,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			c, err := newClient()
+			if err != nil {
+				return err
+			}
+
+			body := map[string]interface{}{
+				"traffic": traffic,
+			}
+			if promoCode != "" {
+				body["promoCode"] = promoCode
+			}
+
+			result, err := c.PostAndPrint("/open/v1/pay/proxies/buy", body)
+			if err != nil {
+				return err
+			}
+			fmt.Println(result)
+			return nil
+		},
+	}
+
+	cmd.Flags().IntVar(&traffic, "traffic", 0, "Traffic to buy in GB: 5/10/20/50/100/150/200/300/400/500/600/700/800/900/1000/2000/3000/4000/5000 (required)")
+	cmd.Flags().StringVar(&promoCode, "promo-code", "", "Promo code (optional)")
+	_ = cmd.MarkFlagRequired("traffic")
 
 	return cmd
 }

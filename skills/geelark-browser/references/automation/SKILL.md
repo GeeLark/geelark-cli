@@ -16,6 +16,7 @@ Browser automation task management. Create, query, cancel, and retry RPA tasks a
 | `tiktok-search` | TikTok search videos, likes and comments |
 | `tiktok-comment` | TikTok like and comment on videos |
 | `tiktok-like` | TikTok like specified videos |
+| `tiktok-pub-video` | TikTok publish video |
 | `youtube-watch` | YouTube watch videos |
 | `x-post` | X (Twitter) post a tweet |
 | `x-like` | X (Twitter) like and retweet tweets |
@@ -81,6 +82,7 @@ All automation task creation commands require:
 - [tiktok-search](tiktok/geelark-browser-automation-tiktok-search.md)
 - [tiktok-comment](tiktok/geelark-browser-automation-tiktok-comment.md)
 - [tiktok-like](tiktok/geelark-browser-automation-tiktok-like.md)
+- [tiktok-pub-video](tiktok/geelark-browser-automation-tiktok-pub-video.md)
 
 ### YouTube
 - [youtube-watch](youtube/geelark-browser-automation-youtube-watch.md)
